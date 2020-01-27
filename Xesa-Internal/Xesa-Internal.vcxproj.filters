@@ -160,5 +160,8 @@
     <ClInclude Include="NetVars.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SDK\Entities.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

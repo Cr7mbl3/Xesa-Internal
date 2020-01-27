@@ -10,7 +10,9 @@
 
 #include "SDK/ICvar.h"
 #include "SDK/IBaseClientDLL.h"
+#include "SDK/IClientEntityList.h"
 #include "SDK/CInput.h"
+#include "SDK/Entities.h"
 
 class CClientMode;
 
@@ -23,8 +25,10 @@ public:
 	ICvar* Cvar = findInterface<ICvar>(vstdlib, "VEngineCvar007");
 	IBaseClientDLL* Client = findInterface<IBaseClientDLL>(client_panorama, "VClient018");
 	CClientMode* ClientMode = **reinterpret_cast<CClientMode***>((*reinterpret_cast<uintptr_t**>(Client))[10] + 5);
+	IClientEntityList* EntityList = findInterface<IClientEntityList>(client_panorama, "VClientEntityList003");
 	IDirect3DDevice9* D3DDevice9 = **(IDirect3DDevice9***)(Utils::PatternScan(shaderapidx9, "A1 ? ? ? ? 50 8B 08 FF 51 0C") + 1);
 	CInput* Input = *(CInput**)(Utils::PatternScan(client_panorama, "B9 ? ? ? ? F3 0F 11 04 24 FF 50 10") + 1);
+	C_LocalPlayer LocalPlayer = *(C_LocalPlayer*)(Utils::PatternScan(client_panorama, "8B 0D ? ? ? ? 83 FF FF 74 07") + 2);
 
 	static HMODULE findModule(const wchar_t* name) noexcept 
 	{

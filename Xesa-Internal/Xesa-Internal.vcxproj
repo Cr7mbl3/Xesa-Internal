@@ -205,6 +205,7 @@
     <ClInclude Include="SDK\const.h" />
     <ClInclude Include="SDK\ConVar.h" />
     <ClInclude Include="SDK\CUserCmd.h" />
+    <ClInclude Include="SDK\Entities.h" />
     <ClInclude Include="SDK\IBaseClientDLL.h" />
     <ClInclude Include="SDK\IClientEntityList.h" />
     <ClInclude Include="SDK\ICvar.h" />

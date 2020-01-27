@@ -44,16 +44,19 @@ namespace Hooks {
 
 	bool __stdcall CreateMove(float inputSampleTime, CUserCmd* cmd) {
 		static auto oCreateMove = clientHook.get_original<decltype(&CreateMove)>(index::CreateMove);
+		auto result = oCreateMove(inputSampleTime, cmd);
 
 		static int counter = 0;
 		counter++;
-		if (counter > 64) {
+		if (counter > 64) { //To get a bit more performance, some features will be only called every 64 ticks
 			counter = 0;
+			Misc::SpoofSvCheats(1);
 			Misc::GrenadePrediction();
 			Misc::SniperCrosshair();
+			Misc::RecoilCrosshair();
 		}
-
-		return oCreateMove(inputSampleTime, cmd);
+		Misc::BunnyHop(cmd);
+		return result;
 	}
 
 	HRESULT __stdcall EndScene(IDirect3DDevice9* pDevice) {
