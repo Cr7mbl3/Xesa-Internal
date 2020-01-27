@@ -4,6 +4,7 @@ CS:GO cheat by Cr7mbl3 and Stortex, currently in alpha
 # ToDo:
 
 Source
+- NetVar system
 - Entities/LocalPlayer interface
 - EntityList
 - Make Menu ungrab the courser
