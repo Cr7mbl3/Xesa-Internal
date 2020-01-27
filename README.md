@@ -1,6 +1,5 @@
 # Xesa-Internal
-CS:GO cheat by Cr7mbl3 and Stortex
-Currently in alpha
+CS:GO cheat by Cr7mbl3 and Stortex, currently in alpha
 
 # ToDo:
 
