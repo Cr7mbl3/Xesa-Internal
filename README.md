@@ -4,7 +4,6 @@ CS:GO cheat by Cr7mbl3 and Stortex, currently in alpha
 # ToDo:
 
 Source
-- Entities/LocalPlayer interface
 - Make Menu ungrab the courser
 - SendPacket pointer in CreateMove
 - Make Sniper Crosshair, Nade Prediction values for the menu
@@ -12,7 +11,6 @@ Source
 - ThirdPerson view angles adapt to server rotation/hitbox
 
 Features
-- BHop 
 - ThirdPerson
 - Visuals
 - SkinChanger
