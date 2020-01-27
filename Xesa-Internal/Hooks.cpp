@@ -1,45 +1,33 @@
 #include "Hooks.h"
 
 #include "SDK/CUserCmd.h"
+
 #include "Menu.h"
 #include "imgui/impl/imgui_impl_dx9.h"
 #include "imgui/impl/imgui_impl_win32.h"
+
+#include "features/Misc.h"
 
 namespace Hooks {
 
 	void Initialize()
 	{
-
 		originalWndProc = WNDPROC(SetWindowLongA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(WndProc)));
-
 		clientHook.setup(Interfaces::Get().ClientMode);
 		direct3dHook.setup(Interfaces::Get().D3DDevice9);
 
-		clientHook.hook_index(24, CreateMove);
+		clientHook.hook_index(index::CreateMove, CreateMove);
 		direct3dHook.hook_index(index::EndScene, EndScene);
 		direct3dHook.hook_index(index::Reset, Reset);
-
-		static ConVar* sv_cheats = Interfaces::Get().Cvar->FindVar("sv_cheats");
-		sv_cheats->SetValue(1);
-		static ConVar* cl_grenadepreview = Interfaces::Get().Cvar->FindVar("cl_grenadepreview");
-		cl_grenadepreview->SetValue(1);
-		static ConVar* weapon_debug_spread_show = Interfaces::Get().Cvar->FindVar("weapon_debug_spread_show");
-		weapon_debug_spread_show->SetValue(3);
 	}
 
 	void Release()
 	{
+		Misc::SpoofSvCheats(0);
+
 		clientHook.unhook_all();
 		direct3dHook.unhook_all();
-
 		SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(originalWndProc));
-
-		static ConVar* sv_cheats = Interfaces::Get().Cvar->FindVar("sv_cheats");
-		sv_cheats->SetValue(0);
-		static ConVar* cl_grenadepreview = Interfaces::Get().Cvar->FindVar("cl_grenadepreview");
-		cl_grenadepreview->SetValue(0);
-		static ConVar* weapon_debug_spread_show = Interfaces::Get().Cvar->FindVar("weapon_debug_spread_show");
-		weapon_debug_spread_show->SetValue(3);
 	}
 
 	LRESULT __stdcall WndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -56,6 +44,15 @@ namespace Hooks {
 
 	bool __stdcall CreateMove(float inputSampleTime, CUserCmd* cmd) {
 		static auto oCreateMove = clientHook.get_original<decltype(&CreateMove)>(index::CreateMove);
+
+		static int counter = 0;
+		counter++;
+		if (counter > 64) {
+			counter = 0;
+			Misc::GrenadePrediction();
+			Misc::SniperCrosshair();
+		}
+
 		return oCreateMove(inputSampleTime, cmd);
 	}
 
