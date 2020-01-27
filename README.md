@@ -8,7 +8,7 @@ Source
 - EntityList
 - Make Menu ungrab the courser
 - SendPacket pointer in CreateMove
-- Make Sniper Crosshair, Nade Prediction in Misc class and Values for the menu
+- Make Sniper Crosshair, Nade Prediction values for the menu
 - Engine Prediction
 - ThirdPerson view angles adapt to server rotation/hitbox
 
