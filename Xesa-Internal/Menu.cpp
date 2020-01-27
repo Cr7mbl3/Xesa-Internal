@@ -49,7 +49,7 @@ void Menu::Render()
 
 	if (!_visible)
 		return;
-
+	
 	ImGui::SetNextWindowPos(ImVec2{ 0, 0 }, ImGuiSetCond_Once);
 	ImGui::SetNextWindowSize(ImVec2{ 1000, 420 }, ImGuiSetCond_Once);
 

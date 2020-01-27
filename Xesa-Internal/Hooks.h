@@ -9,9 +9,9 @@ namespace Hooks
 {
 	namespace index
 	{
+		constexpr auto CreateMove = 24;
 		constexpr auto EndScene = 42;
 		constexpr auto Reset = 16;
-		constexpr auto CreateMove = 24;
 	}
 
 	inline WNDPROC originalWndProc;
