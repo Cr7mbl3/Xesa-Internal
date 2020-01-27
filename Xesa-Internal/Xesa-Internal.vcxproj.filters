@@ -65,6 +65,9 @@
     <ClCompile Include="features\Misc.cpp">
       <Filter>Quelldateien\features</Filter>
     </ClCompile>
+    <ClCompile Include="NetVars.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Singleton.h">
@@ -153,6 +156,9 @@
     </ClInclude>
     <ClInclude Include="features\Misc.h">
       <Filter>Headerdateien\features</Filter>
+    </ClInclude>
+    <ClInclude Include="NetVars.h">
+      <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

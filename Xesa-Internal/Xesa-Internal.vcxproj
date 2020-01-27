@@ -180,6 +180,7 @@
     <ClCompile Include="imgui\impl\imgui_impl_dx9.cpp" />
     <ClCompile Include="imgui\impl\imgui_impl_win32.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="NetVars.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="vfunc_hook.cpp" />
   </ItemGroup>
@@ -196,6 +197,7 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="Interfaces.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="NetVars.h" />
     <ClInclude Include="SDK\basetypes.h" />
     <ClInclude Include="SDK\CInput.h" />
     <ClInclude Include="SDK\ClientClass.h" />

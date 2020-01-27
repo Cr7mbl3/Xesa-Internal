@@ -2,6 +2,16 @@
 
 #include "../vfunc.h"
 
+class IClientEntity;
+
 class IClientEntityList {
-	//TODO: add entities and this
+	
+public:
+	IClientEntity* GetClientEntity(int entnum) {
+		return CallVFunction<IClientEntity*, int>(this, 3, entnum);
+	}
+
+	int GetHighestEntityIndex() {
+		return CallVFunction<int>(this, 6);
+	}
 };
