@@ -5,6 +5,7 @@
 #include "imgui/impl/imgui_impl_dx9.h"
 #include "imgui/impl/imgui_impl_win32.h"
 #include "Interfaces.h"
+#include "Config.h"
 
 
 void Menu::Initialize()
@@ -59,8 +60,10 @@ void Menu::Render()
 
 		ImGui::BeginGroupBox("##body_content");
 		{
-			static bool sample;
-			ImGui::Checkbox("Sample Checkbox", &sample);
+			ImGui::Checkbox("Recoil Crosshair", config.visual_recoilCrosshair);
+			ImGui::Checkbox("Sniper Crosshair", config.visual_sniperCrosshair);
+			ImGui::Checkbox("Grenade Prediction", config.visual_grenadePrediction);
+			ImGui::Checkbox("Bunny Hop", config.misc_bhop);
 		}
 		ImGui::EndGroupBox();
 

@@ -19,6 +19,7 @@ namespace Hooks {
 		clientHook.hook_index(index::CreateMove, CreateMove);
 		direct3dHook.hook_index(index::EndScene, EndScene);
 		direct3dHook.hook_index(index::Reset, Reset);
+		//TODO: Lock cursor hook
 	}
 
 	void Release()
@@ -36,7 +37,7 @@ namespace Hooks {
 		}
 
 		LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-		if (Menu::Get().isOpened() && msg >= WM_INPUT && !ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam))
+		if (Menu::Get().isOpened() && /*msg >= WM_INPUT && */ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam))
 			return true;
 
 		return CallWindowProc(originalWndProc, window, msg, wParam, lParam);

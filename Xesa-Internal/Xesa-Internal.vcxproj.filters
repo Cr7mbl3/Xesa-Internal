@@ -68,6 +68,9 @@
     <ClCompile Include="NetVars.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Singleton.h">
@@ -162,6 +165,9 @@
     </ClInclude>
     <ClInclude Include="SDK\Entities.h">
       <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
