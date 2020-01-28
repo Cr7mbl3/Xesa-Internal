@@ -8,12 +8,6 @@
 
 namespace Misc {
 
-	void SpoofSvCheats(int value)
-	{
-		static ConVar* sv_cheats = Interfaces::Get().Cvar->FindVar("sv_cheats");
-		sv_cheats->SetValue(1);
-	}
-
 	void GrenadePrediction()
 	{
 		static ConVar* cl_grenadepreview = Interfaces::Get().Cvar->FindVar("cl_grenadepreview");

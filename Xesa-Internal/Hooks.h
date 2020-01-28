@@ -14,6 +14,7 @@ namespace Hooks
 		constexpr auto Reset = 16;
 		constexpr auto LockCursor = 67;
 		constexpr auto DoPostScreenEffects = 44;
+		constexpr auto ConVar_GetBool = 13;
 	}
 
 	inline WNDPROC originalWndProc;
@@ -21,6 +22,7 @@ namespace Hooks
 	inline vfunc_hook clientmodeHook;
 	inline vfunc_hook direct3dHook;
 	inline vfunc_hook surfaceHook;
+	inline vfunc_hook svcheatsHook;
 
 	void Initialize();
 	void Release();
@@ -31,4 +33,5 @@ namespace Hooks
 	HRESULT __stdcall Reset(IDirect3DDevice9* pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters);
 	void __stdcall LockCursor();
 	int __fastcall DoPostScreenEffects(void* _this, int edx, int a1);
+	bool __fastcall SvCheatsGetBool(PVOID pConVar);
 };

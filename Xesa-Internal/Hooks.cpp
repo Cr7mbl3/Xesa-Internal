@@ -1,5 +1,7 @@
 #include "Hooks.h"
 
+#include <intrin.h>
+
 #include "SDK/CUserCmd.h"
 
 #include "Menu.h"
@@ -17,22 +19,24 @@ namespace Hooks {
 		clientmodeHook.setup(Interfaces::Get().ClientMode);
 		direct3dHook.setup(Interfaces::Get().D3DDevice9);
 		surfaceHook.setup(Interfaces::Get().Surface);
+		svcheatsHook.setup(Interfaces::Get().Cvar->FindVar("sv_cheats"));
 
 		clientmodeHook.hook_index(index::CreateMove, CreateMove);
 		clientmodeHook.hook_index(index::DoPostScreenEffects, DoPostScreenEffects);
 		direct3dHook.hook_index(index::EndScene, EndScene);
 		direct3dHook.hook_index(index::Reset, Reset);
 		surfaceHook.hook_index(index::LockCursor, LockCursor);
+		svcheatsHook.hook_index(index::ConVar_GetBool, SvCheatsGetBool);
 	}
 
 	void Release()
 	{
 		Glow::Release();
-		Misc::SpoofSvCheats(0);
 
 		clientmodeHook.unhook_all();
 		direct3dHook.unhook_all();
 		surfaceHook.unhook_all();
+		svcheatsHook.unhook_all();
 		SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(originalWndProc));
 	}
 
@@ -61,7 +65,6 @@ namespace Hooks {
 		counter++;
 		if (counter > 64) { //To get a bit more performance, some features will be only called every 64 ticks
 			counter = 0;
-			Misc::SpoofSvCheats(1);
 			Misc::GrenadePrediction();
 			Misc::SniperCrosshair();
 			Misc::RecoilCrosshair();
@@ -146,6 +149,15 @@ namespace Hooks {
 		}
 
 		return oDoPostScreenEffects(Interfaces::Get().ClientMode, edx, a1);
+	}
+
+	bool __fastcall SvCheatsGetBool(PVOID pConVar)
+	{
+		static auto dwCAM_Think = Utils::PatternScan(GetModuleHandleW(L"client_panorama.dll"), "85 C0 75 30 38 86");
+		static auto oGetBool = svcheatsHook.get_original<bool(__thiscall*)(PVOID)>(index::ConVar_GetBool); //This crashes when called like other hooks?
+		if (!oGetBool)
+			return false;
+		return reinterpret_cast<DWORD>(_ReturnAddress()) == reinterpret_cast<DWORD>(dwCAM_Think) || oGetBool(pConVar);
 	}
 
 	
