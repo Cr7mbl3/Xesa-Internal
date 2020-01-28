@@ -42,7 +42,7 @@ namespace Hooks {
 		}
 
 		LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-		if (Menu::Get().isOpened() && /*msg >= WM_INPUT && */ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam))
+		if (Menu::Get().isOpened() && ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam))
 			return true;
 
 		return CallWindowProc(originalWndProc, window, msg, wParam, lParam);
@@ -51,6 +51,11 @@ namespace Hooks {
 	bool __stdcall CreateMove(float inputSampleTime, CUserCmd* cmd) {
 		static auto oCreateMove = clientmodeHook.get_original<decltype(&CreateMove)>(index::CreateMove);
 		auto result = oCreateMove(inputSampleTime, cmd);
+
+		//sendPacket pointer from osiris
+		uintptr_t* framePointer;
+		__asm mov framePointer, ebp;
+		bool& bSendPacket = *reinterpret_cast<bool*>(*framePointer - 0x1C);
 
 		static int counter = 0;
 		counter++;
@@ -76,7 +81,6 @@ namespace Hooks {
 		pDevice->GetRenderState(D3DRS_SRGBWRITEENABLE, &srgbwrite);
 
 		pDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0xffffffff);
-		//removes the source engine color correction
 		pDevice->SetRenderState(D3DRS_SRGBWRITEENABLE, false);
 
 		pDevice->GetRenderState(D3DRS_COLORWRITEENABLE, &dwOld_D3DRS_COLORWRITEENABLE);
