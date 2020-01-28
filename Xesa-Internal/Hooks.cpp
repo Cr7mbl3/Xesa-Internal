@@ -7,27 +7,32 @@
 #include "imgui/impl/imgui_impl_win32.h"
 
 #include "features/Misc.h"
+#include "features/Glow.h"
 
 namespace Hooks {
 
 	void Initialize()
 	{
 		originalWndProc = WNDPROC(SetWindowLongA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(WndProc)));
-		clientHook.setup(Interfaces::Get().ClientMode);
+		clientmodeHook.setup(Interfaces::Get().ClientMode);
 		direct3dHook.setup(Interfaces::Get().D3DDevice9);
+		surfaceHook.setup(Interfaces::Get().Surface);
 
-		clientHook.hook_index(index::CreateMove, CreateMove);
+		clientmodeHook.hook_index(index::CreateMove, CreateMove);
+		clientmodeHook.hook_index(index::DoPostScreenEffects, DoPostScreenEffects);
 		direct3dHook.hook_index(index::EndScene, EndScene);
 		direct3dHook.hook_index(index::Reset, Reset);
-		//TODO: Lock cursor hook
+		surfaceHook.hook_index(index::LockCursor, LockCursor);
 	}
 
 	void Release()
 	{
+		Glow::Release();
 		Misc::SpoofSvCheats(0);
 
-		clientHook.unhook_all();
+		clientmodeHook.unhook_all();
 		direct3dHook.unhook_all();
+		surfaceHook.unhook_all();
 		SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(originalWndProc));
 	}
 
@@ -44,7 +49,7 @@ namespace Hooks {
 	}
 
 	bool __stdcall CreateMove(float inputSampleTime, CUserCmd* cmd) {
-		static auto oCreateMove = clientHook.get_original<decltype(&CreateMove)>(index::CreateMove);
+		static auto oCreateMove = clientmodeHook.get_original<decltype(&CreateMove)>(index::CreateMove);
 		auto result = oCreateMove(inputSampleTime, cmd);
 
 		static int counter = 0;
@@ -117,6 +122,26 @@ namespace Hooks {
 			Menu::Get().OnDeviceReset();
 
 		return hr;
+	}
+
+	void __stdcall LockCursor() {
+		static auto oLockCursor = surfaceHook.get_original<decltype(&LockCursor)>(index::LockCursor);
+		if (Menu::Get().isOpened()) {
+			Interfaces::Get().Surface->UnlockCursor();
+			return;
+		}
+		oLockCursor();
+	}
+
+	int __fastcall DoPostScreenEffects(void* _this, int edx, int a1)
+	{
+		static auto oDoPostScreenEffects = clientmodeHook.get_original<decltype(&DoPostScreenEffects)>(index::DoPostScreenEffects);
+
+		if (Interfaces::Get().LocalPlayer) {
+			Glow::Run();
+		}
+
+		return oDoPostScreenEffects(Interfaces::Get().ClientMode, edx, a1);
 	}
 
 	

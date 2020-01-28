@@ -23,6 +23,7 @@ public:
 class Config
 {
 public:
+	VALUE(bool, visual_glow, true);
 	VALUE(bool, visual_sniperCrosshair, true);
 	VALUE(bool, visual_recoilCrosshair, true);
 	VALUE(bool, visual_grenadePrediction, true);

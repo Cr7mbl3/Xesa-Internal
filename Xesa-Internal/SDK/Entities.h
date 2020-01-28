@@ -3,6 +3,7 @@
 #include "../NetVars.h"
 #include "Vector.h"
 #include "QAngle.h"
+#include "IClientEntity.h"
 
 #define NETVAR(type, name, table, netvar)\
 	type& name##() const {\
@@ -29,7 +30,7 @@ public:
 	NETVAR(float, m_flDefuseCountDown, "DT_PlantedC4", "m_flDefuseCountDown");
 };
 
-class C_BaseEntity
+class C_BaseEntity : public IClientEntity
 {
 public:
 	NETVAR(int32_t, m_iTeamNum, "DT_BaseEntity", "m_iTeamNum");
@@ -39,7 +40,7 @@ public:
 	NETVAR(bool, m_bSpotted, "DT_DynamicProp", "m_bSpotted");
 };
 
-class C_BasePlayer : C_BaseEntity 
+class C_BasePlayer : public C_BaseEntity 
 {
 public:
 	NETVAR(bool, m_bHasDefuser, "DT_CSPlayer", "m_bHasDefuser");

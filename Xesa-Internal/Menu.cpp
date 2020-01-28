@@ -60,6 +60,7 @@ void Menu::Render()
 
 		ImGui::BeginGroupBox("##body_content");
 		{
+			ImGui::Checkbox("Glow", config.visual_glow);
 			ImGui::Checkbox("Recoil Crosshair", config.visual_recoilCrosshair);
 			ImGui::Checkbox("Sniper Crosshair", config.visual_sniperCrosshair);
 			ImGui::Checkbox("Grenade Prediction", config.visual_grenadePrediction);

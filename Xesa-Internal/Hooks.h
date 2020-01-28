@@ -12,12 +12,15 @@ namespace Hooks
 		constexpr auto CreateMove = 24;
 		constexpr auto EndScene = 42;
 		constexpr auto Reset = 16;
+		constexpr auto LockCursor = 67;
+		constexpr auto DoPostScreenEffects = 44;
 	}
 
 	inline WNDPROC originalWndProc;
 
-	inline vfunc_hook clientHook;
+	inline vfunc_hook clientmodeHook;
 	inline vfunc_hook direct3dHook;
+	inline vfunc_hook surfaceHook;
 
 	void Initialize();
 	void Release();
@@ -26,4 +29,6 @@ namespace Hooks
 	bool __stdcall CreateMove(float inputSampleTime, CUserCmd* cmd);
 	HRESULT __stdcall EndScene(IDirect3DDevice9* pDevice);
 	HRESULT __stdcall Reset(IDirect3DDevice9* pDevice, D3DPRESENT_PARAMETERS* pPresentationParameters);
+	void __stdcall LockCursor();
+	int __fastcall DoPostScreenEffects(void* _this, int edx, int a1);
 };
