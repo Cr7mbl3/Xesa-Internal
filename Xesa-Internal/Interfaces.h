@@ -15,6 +15,7 @@
 #include "SDK/Entities.h"
 #include "SDK/ISurface.h"
 #include "SDK/GlowOutlineEffect.h"
+#include "SDK/GlobalVars.h"
 
 class CClientMode;
 
@@ -35,6 +36,7 @@ public:
 	CInput* Input = *(CInput**)(Utils::PatternScan(client_panorama, "B9 ? ? ? ? F3 0F 11 04 24 FF 50 10") + 1);
 	C_LocalPlayer LocalPlayer = *(C_LocalPlayer*)(Utils::PatternScan(client_panorama, "8B 0D ? ? ? ? 83 FF FF 74 07") + 2);
 	CGlowObjectManager* GlowObjectManager = *(CGlowObjectManager**)(Utils::PatternScan(client_panorama, "0F 11 05 ? ? ? ? 83 C8 01") + 3);
+	CGlobalVarsBase* GlobalVars = **reinterpret_cast<CGlobalVarsBase***>((*reinterpret_cast<uintptr_t**>(Client))[0] + 27);
 
 	static HMODULE findModule(const wchar_t* name) noexcept 
 	{

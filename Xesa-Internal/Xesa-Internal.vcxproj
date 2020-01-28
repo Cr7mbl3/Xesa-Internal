@@ -210,6 +210,7 @@
     <ClInclude Include="SDK\ConVar.h" />
     <ClInclude Include="SDK\CUserCmd.h" />
     <ClInclude Include="SDK\Entities.h" />
+    <ClInclude Include="SDK\GlobalVars.h" />
     <ClInclude Include="SDK\GlowOutlineEffect.h" />
     <ClInclude Include="SDK\IBaseClientDLL.h" />
     <ClInclude Include="SDK\IClientEntity.h" />

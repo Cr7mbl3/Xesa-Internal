@@ -205,5 +205,8 @@
     <ClInclude Include="features\Glow.h">
       <Filter>Headerdateien\features</Filter>
     </ClInclude>
+    <ClInclude Include="SDK\GlobalVars.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
