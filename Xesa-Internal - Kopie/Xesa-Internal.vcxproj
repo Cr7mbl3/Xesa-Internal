@@ -171,7 +171,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Config.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="features\Glow.cpp" />
+    <ClCompile Include="features\Misc.cpp" />
     <ClCompile Include="Hooks.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
@@ -179,10 +182,14 @@
     <ClCompile Include="imgui\impl\imgui_impl_dx9.cpp" />
     <ClCompile Include="imgui\impl\imgui_impl_win32.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="NetVars.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="vfunc_hook.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Config.h" />
+    <ClInclude Include="features\Glow.h" />
+    <ClInclude Include="features\Misc.h" />
     <ClInclude Include="Hooks.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
@@ -194,6 +201,7 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="Interfaces.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="NetVars.h" />
     <ClInclude Include="SDK\basetypes.h" />
     <ClInclude Include="SDK\CInput.h" />
     <ClInclude Include="SDK\ClientClass.h" />
@@ -201,11 +209,23 @@
     <ClInclude Include="SDK\const.h" />
     <ClInclude Include="SDK\ConVar.h" />
     <ClInclude Include="SDK\CUserCmd.h" />
+    <ClInclude Include="SDK\Entities.h" />
+    <ClInclude Include="SDK\GlobalVars.h" />
+    <ClInclude Include="SDK\GlowOutlineEffect.h" />
     <ClInclude Include="SDK\IBaseClientDLL.h" />
+    <ClInclude Include="SDK\IClientEntity.h" />
     <ClInclude Include="SDK\IClientEntityList.h" />
+    <ClInclude Include="SDK\IClientNetworkable.h" />
+    <ClInclude Include="SDK\IClientRenderable.h" />
+    <ClInclude Include="SDK\IClientThinkable.h" />
+    <ClInclude Include="SDK\IClientUnknown.h" />
+    <ClInclude Include="SDK\ICollideable.h" />
     <ClInclude Include="SDK\ICvar.h" />
+    <ClInclude Include="SDK\IHandleEntity.h" />
+    <ClInclude Include="SDK\ISurface.h" />
     <ClInclude Include="SDK\QAngle.h" />
     <ClInclude Include="SDK\Recv.h" />
+    <ClInclude Include="SDK\UtlVector.h" />
     <ClInclude Include="SDK\Vector.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Utils.h" />

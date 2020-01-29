@@ -15,5 +15,4 @@ public:
 	{
 		return CallVFunction<bool, int, int, int, void*>(this, 38, messageType, arg, arg1, data);
 	}
-
 };

@@ -5,6 +5,7 @@
 #include "imgui/impl/imgui_impl_dx9.h"
 #include "imgui/impl/imgui_impl_win32.h"
 #include "Interfaces.h"
+#include "Config.h"
 
 
 void Menu::Initialize()
@@ -48,7 +49,7 @@ void Menu::Render()
 
 	if (!_visible)
 		return;
-
+	
 	ImGui::SetNextWindowPos(ImVec2{ 0, 0 }, ImGuiSetCond_Once);
 	ImGui::SetNextWindowSize(ImVec2{ 1000, 420 }, ImGuiSetCond_Once);
 
@@ -59,8 +60,11 @@ void Menu::Render()
 
 		ImGui::BeginGroupBox("##body_content");
 		{
-			static bool sample;
-			ImGui::Checkbox("Sample Checkbox", &sample);
+			ImGui::Checkbox("Glow", config.visual_glow);
+			ImGui::Checkbox("Bunny Hop", config.misc_bhop);
+			ImGui::Checkbox("Recoil Crosshair", config.visual_recoilCrosshair);
+			ImGui::Checkbox("Sniper Crosshair", config.visual_sniperCrosshair);
+			ImGui::Checkbox("Grenade Prediction", config.visual_grenadePrediction);
 		}
 		ImGui::EndGroupBox();
 

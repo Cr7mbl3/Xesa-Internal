@@ -74,6 +74,9 @@
     <ClCompile Include="features\Glow.cpp">
       <Filter>Quelldateien\features</Filter>
     </ClCompile>
+    <ClCompile Include="Interfaces.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Singleton.h">

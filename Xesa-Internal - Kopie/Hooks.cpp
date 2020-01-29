@@ -1,45 +1,43 @@
 #include "Hooks.h"
 
+#include <intrin.h>
+
 #include "SDK/CUserCmd.h"
+
 #include "Menu.h"
 #include "imgui/impl/imgui_impl_dx9.h"
 #include "imgui/impl/imgui_impl_win32.h"
+
+#include "features/Misc.h"
+#include "features/Glow.h"
 
 namespace Hooks {
 
 	void Initialize()
 	{
-
 		originalWndProc = WNDPROC(SetWindowLongA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(WndProc)));
-
-		clientHook.setup(Interfaces::Get().ClientMode);
+		clientmodeHook.setup(Interfaces::Get().ClientMode);
 		direct3dHook.setup(Interfaces::Get().D3DDevice9);
+		surfaceHook.setup(Interfaces::Get().Surface);
+		svcheatsHook.setup(Interfaces::Get().Cvar->FindVar("sv_cheats"));
 
-		clientHook.hook_index(24, CreateMove);
+		clientmodeHook.hook_index(index::CreateMove, CreateMove);
+		clientmodeHook.hook_index(index::DoPostScreenEffects, DoPostScreenEffects);
 		direct3dHook.hook_index(index::EndScene, EndScene);
 		direct3dHook.hook_index(index::Reset, Reset);
-
-		static ConVar* sv_cheats = Interfaces::Get().Cvar->FindVar("sv_cheats");
-		sv_cheats->SetValue(1);
-		static ConVar* cl_grenadepreview = Interfaces::Get().Cvar->FindVar("cl_grenadepreview");
-		cl_grenadepreview->SetValue(1);
-		static ConVar* weapon_debug_spread_show = Interfaces::Get().Cvar->FindVar("weapon_debug_spread_show");
-		weapon_debug_spread_show->SetValue(3);
+		surfaceHook.hook_index(index::LockCursor, LockCursor);
+		svcheatsHook.hook_index(index::ConVar_GetBool, SvCheatsGetBool);
 	}
 
 	void Release()
 	{
-		clientHook.unhook_all();
+		Glow::Release();
+
+		clientmodeHook.unhook_all();
 		direct3dHook.unhook_all();
-
+		surfaceHook.unhook_all();
+		svcheatsHook.unhook_all();
 		SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(originalWndProc));
-
-		static ConVar* sv_cheats = Interfaces::Get().Cvar->FindVar("sv_cheats");
-		sv_cheats->SetValue(0);
-		static ConVar* cl_grenadepreview = Interfaces::Get().Cvar->FindVar("cl_grenadepreview");
-		cl_grenadepreview->SetValue(0);
-		static ConVar* weapon_debug_spread_show = Interfaces::Get().Cvar->FindVar("weapon_debug_spread_show");
-		weapon_debug_spread_show->SetValue(3);
 	}
 
 	LRESULT __stdcall WndProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -48,15 +46,31 @@ namespace Hooks {
 		}
 
 		LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-		if (Menu::Get().isOpened() && msg >= WM_INPUT && !ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam))
+		if (Menu::Get().isOpened() && ImGui_ImplWin32_WndProcHandler(window, msg, wParam, lParam))
 			return true;
 
 		return CallWindowProc(originalWndProc, window, msg, wParam, lParam);
 	}
 
 	bool __stdcall CreateMove(float inputSampleTime, CUserCmd* cmd) {
-		static auto oCreateMove = clientHook.get_original<decltype(&CreateMove)>(index::CreateMove);
-		return oCreateMove(inputSampleTime, cmd);
+		static auto oCreateMove = clientmodeHook.get_original<decltype(&CreateMove)>(index::CreateMove);
+		auto result = oCreateMove(inputSampleTime, cmd);
+
+		//sendPacket pointer from osiris
+		uintptr_t* framePointer;
+		__asm mov framePointer, ebp;
+		bool& bSendPacket = *reinterpret_cast<bool*>(*framePointer - 0x1C);
+
+		static int counter = 0;
+		counter++;
+		if (counter > 64) { //To get a bit more performance, some features will be only called every 64 ticks
+			counter = 0;
+			Misc::GrenadePrediction();
+			Misc::SniperCrosshair();
+			Misc::RecoilCrosshair();
+		}
+		Misc::BunnyHop(cmd);
+		return result;
 	}
 
 	HRESULT __stdcall EndScene(IDirect3DDevice9* pDevice) {
@@ -70,7 +84,6 @@ namespace Hooks {
 		pDevice->GetRenderState(D3DRS_SRGBWRITEENABLE, &srgbwrite);
 
 		pDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0xffffffff);
-		//removes the source engine color correction
 		pDevice->SetRenderState(D3DRS_SRGBWRITEENABLE, false);
 
 		pDevice->GetRenderState(D3DRS_COLORWRITEENABLE, &dwOld_D3DRS_COLORWRITEENABLE);
@@ -82,8 +95,7 @@ namespace Hooks {
 		pDevice->SetSamplerState(NULL, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 		pDevice->SetSamplerState(NULL, D3DSAMP_ADDRESSW, D3DTADDRESS_WRAP);
 		pDevice->SetSamplerState(NULL, D3DSAMP_SRGBTEXTURE, NULL);
-
-
+		
 		ImGui_ImplDX9_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
@@ -117,6 +129,35 @@ namespace Hooks {
 			Menu::Get().OnDeviceReset();
 
 		return hr;
+	}
+
+	void __stdcall LockCursor() {
+		static auto oLockCursor = surfaceHook.get_original<decltype(&LockCursor)>(index::LockCursor);
+		if (Menu::Get().isOpened()) {
+			Interfaces::Get().Surface->UnlockCursor();
+			return;
+		}
+		oLockCursor();
+	}
+
+	int __fastcall DoPostScreenEffects(void* _this, int edx, int a1)
+	{
+		static auto oDoPostScreenEffects = clientmodeHook.get_original<decltype(&DoPostScreenEffects)>(index::DoPostScreenEffects);
+
+		if (Interfaces::Get().LocalPlayer) {
+			Glow::Run();
+		}
+
+		return oDoPostScreenEffects(Interfaces::Get().ClientMode, edx, a1);
+	}
+
+	bool __fastcall SvCheatsGetBool(PVOID pConVar)
+	{
+		static auto dwCAM_Think = Utils::PatternScan(GetModuleHandleW(L"client_panorama.dll"), "85 C0 75 30 38 86");
+		static auto oGetBool = svcheatsHook.get_original<bool(__thiscall*)(PVOID)>(index::ConVar_GetBool); //This crashes when called like other hooks?
+		if (!oGetBool)
+			return false;
+		return reinterpret_cast<DWORD>(_ReturnAddress()) == reinterpret_cast<DWORD>(dwCAM_Think) || oGetBool(pConVar);
 	}
 
 	

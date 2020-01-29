@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <iostream>
 
+#include "Interfaces.h"
 #include "NetVars.h"
 #include "Hooks.h"
 #include "Menu.h"
@@ -32,6 +33,7 @@ DWORD WINAPI Initialize(LPVOID hModule) {
 	std::cout << "Warning: Do not use Debug Build on VAC secured servers!" << std::endl;
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 #endif
+	Interfaces::Initialize();
 	ULONGLONG start = GetTickCount64();
 	NetVars::Get().Initialize();
 	std::cout << NetVars::Get().netvars << " NetVars dumped in " << GetTickCount64() - start << "ms" << std::endl;

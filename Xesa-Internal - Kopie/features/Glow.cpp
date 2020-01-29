@@ -7,9 +7,9 @@ namespace Glow {
 
 	void Run()
 	{
-		int32_t localTeamNum = g_LocalPlayer->m_iTeamNum();
-		for (auto i = 0; i < g_GlowObjectManager->m_GlowObjectDefinitions.m_Size; i++) {
-			auto& glowObject = g_GlowObjectManager->m_GlowObjectDefinitions[i];
+		int32_t localTeamNum = Interfaces::Get().LocalPlayer->m_iTeamNum();
+		for (auto i = 0; i < Interfaces::Get().GlowObjectManager->m_GlowObjectDefinitions.m_Size; i++) {
+			auto& glowObject = Interfaces::Get().GlowObjectManager->m_GlowObjectDefinitions[i];
 			auto entity = (IClientNetworkable*) glowObject.m_pEntity;
 			if (!entity || entity->IsDormant()) {
 				continue;
@@ -31,8 +31,8 @@ namespace Glow {
 
 	void Release()
 	{
-		for (auto i = 0; i < g_GlowObjectManager->m_GlowObjectDefinitions.m_Size; i++) {
-			auto& glowObject = g_GlowObjectManager->m_GlowObjectDefinitions[i];
+		for (auto i = 0; i < Interfaces::Get().GlowObjectManager->m_GlowObjectDefinitions.m_Size; i++) {
+			auto& glowObject = Interfaces::Get().GlowObjectManager->m_GlowObjectDefinitions[i];
 			auto entity = (IClientNetworkable*) glowObject.m_pEntity;
 
 			if (glowObject.IsUnused())

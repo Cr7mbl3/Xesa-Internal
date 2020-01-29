@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <iostream>
 
+#include "NetVars.h"
 #include "Hooks.h"
 #include "Menu.h"
 
@@ -19,6 +20,7 @@ DWORD WINAPI Release(LPVOID hModule) {
 }
 
 DWORD WINAPI Initialize(LPVOID hModule) {
+	ULONGLONG startup = GetTickCount64();
 #ifdef _DEBUG
 	AllocConsole();
 	SetConsoleTitleW(L"Counter-Strike: Global Offensive");
@@ -30,13 +32,18 @@ DWORD WINAPI Initialize(LPVOID hModule) {
 	std::cout << "Warning: Do not use Debug Build on VAC secured servers!" << std::endl;
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 #endif
-
+	ULONGLONG start = GetTickCount64();
+	NetVars::Get().Initialize();
+	std::cout << NetVars::Get().netvars << " NetVars dumped in " << GetTickCount64() - start << "ms" << std::endl;
+	start = GetTickCount64();
 	Menu::Get().Initialize();
 	Hooks::Initialize();
+	std::cout << "Menu and Hooks initialized in " << GetTickCount64() - start << "ms" << std::endl;
+	std::cout << "Finished in " << GetTickCount64() - startup << "ms!" << std::endl;
 
 	std::cout << "Xesa alpha" << std::endl;
 	std::cout << "Built on: " << __DATE__ << " " << __TIME__ << std::endl;
-	std::cout << "Initialized!" << std::endl;
+	
 
 	while (!GetAsyncKeyState(VK_DELETE)) {
 		Sleep(100);

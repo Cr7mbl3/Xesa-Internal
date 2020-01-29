@@ -15,11 +15,11 @@ void Menu::Initialize()
 
 	D3DDEVICE_CREATION_PARAMETERS params;
 
-	if (FAILED(Interfaces::Get().D3DDevice9->GetCreationParameters(&params)))
+	if (FAILED(g_D3DDevice9->GetCreationParameters(&params)))
 		throw std::runtime_error("[InputSys] GetCreationParameters failed.");
 
 	ImGui_ImplWin32_Init(params.hFocusWindow);
-	ImGui_ImplDX9_Init(Interfaces::Get().D3DDevice9);
+	ImGui_ImplDX9_Init(g_D3DDevice9);
 
 	CreateStyle();
 

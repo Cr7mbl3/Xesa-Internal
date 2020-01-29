@@ -8,7 +8,7 @@
 
 void NetVars::Initialize()
 {
-	ClientClass* pClientData = g_Client->GetAllClasses();
+	ClientClass* pClientData = Interfaces::Get().Client->GetAllClasses();
 
 	for (auto pData = pClientData; pData != nullptr; pData = pData->m_pNext)
 	{

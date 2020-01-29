@@ -16,10 +16,10 @@ namespace Hooks {
 	void Initialize()
 	{
 		originalWndProc = WNDPROC(SetWindowLongA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(WndProc)));
-		clientmodeHook.setup(Interfaces::Get().ClientMode);
-		direct3dHook.setup(Interfaces::Get().D3DDevice9);
-		surfaceHook.setup(Interfaces::Get().Surface);
-		svcheatsHook.setup(Interfaces::Get().Cvar->FindVar("sv_cheats"));
+		clientmodeHook.setup(g_ClientMode);
+		direct3dHook.setup(g_D3DDevice9);
+		surfaceHook.setup(g_Surface);
+		svcheatsHook.setup(g_Cvar->FindVar("sv_cheats"));
 
 		clientmodeHook.hook_index(index::CreateMove, CreateMove);
 		clientmodeHook.hook_index(index::DoPostScreenEffects, DoPostScreenEffects);
@@ -134,7 +134,7 @@ namespace Hooks {
 	void __stdcall LockCursor() {
 		static auto oLockCursor = surfaceHook.get_original<decltype(&LockCursor)>(index::LockCursor);
 		if (Menu::Get().isOpened()) {
-			Interfaces::Get().Surface->UnlockCursor();
+			g_Surface->UnlockCursor();
 			return;
 		}
 		oLockCursor();
@@ -144,11 +144,11 @@ namespace Hooks {
 	{
 		static auto oDoPostScreenEffects = clientmodeHook.get_original<decltype(&DoPostScreenEffects)>(index::DoPostScreenEffects);
 
-		if (Interfaces::Get().LocalPlayer) {
+		if (g_LocalPlayer) {
 			Glow::Run();
 		}
 
-		return oDoPostScreenEffects(Interfaces::Get().ClientMode, edx, a1);
+		return oDoPostScreenEffects(g_ClientMode, edx, a1);
 	}
 
 	bool __fastcall SvCheatsGetBool(PVOID pConVar)

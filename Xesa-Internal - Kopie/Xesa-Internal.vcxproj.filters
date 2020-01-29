@@ -24,6 +24,12 @@
     <Filter Include="Quelldateien\imgui\impl">
       <UniqueIdentifier>{c1e8018a-cf49-4f36-90c8-676365389420}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headerdateien\features">
+      <UniqueIdentifier>{a110dc9a-28ae-4f40-be91-031bc4a34c23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\features">
+      <UniqueIdentifier>{cf466ac2-0e9c-43eb-b848-8e30a63cfdda}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -55,6 +61,18 @@
     </ClCompile>
     <ClCompile Include="imgui\impl\imgui_impl_dx9.cpp">
       <Filter>Quelldateien\imgui\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="features\Misc.cpp">
+      <Filter>Quelldateien\features</Filter>
+    </ClCompile>
+    <ClCompile Include="NetVars.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="features\Glow.cpp">
+      <Filter>Quelldateien\features</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +159,54 @@
     </ClInclude>
     <ClInclude Include="Menu.h">
       <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="features\Misc.h">
+      <Filter>Headerdateien\features</Filter>
+    </ClInclude>
+    <ClInclude Include="NetVars.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Entities.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\ISurface.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\GlowOutlineEffect.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IClientEntity.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IClientNetworkable.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IClientRenderable.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IClientThinkable.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IClientUnknown.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IHandleEntity.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\ICollideable.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\UtlVector.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="features\Glow.h">
+      <Filter>Headerdateien\features</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\GlobalVars.h">
+      <Filter>Headerdateien\SDK</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
