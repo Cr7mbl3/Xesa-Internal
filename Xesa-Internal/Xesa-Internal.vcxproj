@@ -186,6 +186,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="NetVars.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="utils\TimeHelper.cpp" />
     <ClCompile Include="vfunc_hook.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -233,6 +234,7 @@
     <ClInclude Include="SDK\Vector.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="utils\TimeHelper.h" />
     <ClInclude Include="vfunc.h" />
     <ClInclude Include="vfunc_hook.h" />
   </ItemGroup>

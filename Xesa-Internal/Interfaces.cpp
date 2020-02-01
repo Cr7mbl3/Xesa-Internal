@@ -43,10 +43,6 @@ T* Interfaces::findInterface(HMODULE hModule, const char* name)
 	ULONG Jump = (((ULONG)CreateInterface + 5) + *(ULONG*)ShortJump) + 4;
 	InterfaceReg* interface_reg = **(InterfaceReg***)(Jump + 6);
 
-	/*for (InterfaceReg* interface_reg = **(InterfaceReg * **)(Jump + 6);
-		!(strstr(interface_reg->m_pName, name) && (strlen(interface_reg->m_pName) - strlen(name)) < 5);
-		interface_reg = interface_reg->m_pNext);*/
-
 	do {
 		if (interface_reg)
 		{
@@ -65,34 +61,4 @@ T* Interfaces::findInterface(HMODULE hModule, const char* name)
 
 	MessageBoxA(nullptr, (std::ostringstream{} << "Cannot find " << name << " interface!").str().c_str(), "Xesa", MB_OK | MB_ICONERROR);
 	std::exit(EXIT_FAILURE);
-
-	//pasterino from https://github.com/DubbleClick/csgo-sdk/blob/master/csgo-sdk/Hack/Interfaces.h
-	/*using namespace std;
-
-	cout << "=======" << name << "=======" << endl;
-
-	auto ci_addr = reinterpret_cast<uintptr_t>(GetProcAddress(hModule, "CreateInterface"));
-	cout << ci_addr << endl;
-
-	auto jmp = ci_addr + 5 + *reinterpret_cast<uintptr_t*>(ci_addr + 5) + 4;
-	cout << jmp << endl;
-
-	auto interface_regs = **reinterpret_cast<InterfaceReg***>(jmp + 6);
-	cout << interface_regs << endl;
-
-	for (auto cur = interface_regs; cur != nullptr; cur = cur->m_pNext) {
-		if (strstr(cur->m_pName, name) && (strlen(cur->m_pName) - strlen(name)) <= 3)
-			return reinterpret_cast<std::add_pointer_t<T * (const char* name, int* returnCode)>>(cur->m_CreateFn())(name, nullptr);
-	}
-
-	return 0;*/
-
-	/*T* foundInterface = reinterpret_cast<std::add_pointer_t<T * (const char* name, int* returnCode)>>(GetProcAddress(hModule, "CreateInterface"))(name, nullptr);
-
-	if (!foundInterface) {
-		MessageBoxA(nullptr, (std::ostringstream{} << "Cannot find " << name << " interface!").str().c_str(), "Xesa", MB_OK | MB_ICONERROR);
-		std::exit(EXIT_FAILURE);
-	}
-
-	return foundInterface;*/
 }

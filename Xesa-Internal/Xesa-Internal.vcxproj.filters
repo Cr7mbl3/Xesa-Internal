@@ -30,6 +30,12 @@
     <Filter Include="Quelldateien\features">
       <UniqueIdentifier>{cf466ac2-0e9c-43eb-b848-8e30a63cfdda}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headerdateien\utils">
+      <UniqueIdentifier>{aaefec7e-f2c7-43ce-afa5-1cef137bc57a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\utils">
+      <UniqueIdentifier>{54a394b4-2090-4866-8903-e2d8a4d57b4a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -79,6 +85,9 @@
     </ClCompile>
     <ClCompile Include="features\LagCompensation.cpp">
       <Filter>Quelldateien\features</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\TimeHelper.cpp">
+      <Filter>Quelldateien\utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -219,6 +228,9 @@
     </ClInclude>
     <ClInclude Include="features\LagCompensation.h">
       <Filter>Headerdateien\features</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\TimeHelper.h">
+      <Filter>Headerdateien\utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
