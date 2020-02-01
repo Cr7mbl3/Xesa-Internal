@@ -15,12 +15,20 @@ public:
 	void Render();
 	void Toggle();
 
-	bool isOpened() const { return _visible; };
+	bool isOpened() const { return _visible; }
+
+	bool isReleaseRequested() const { return _releaseRequested; }
 private:
 	void CreateStyle();
 
 	ImGuiStyle	_style;
 	bool		_visible;
+	bool		_releaseRequested;
+
+	void RenderAimTab();
+	void RenderVisualsTab();
+	void RenderPlayerTab();
+	void RenderOthersTab();
 };
 
 namespace ImGui {
@@ -29,4 +37,6 @@ namespace ImGui {
 	bool ToggleButton(const char* label, bool* v, const ImVec2& size_arg);
 	template<size_t N>
 	void RenderTabs(const char* (&names)[N], int& active);
+	template<size_t N>
+	bool RenderSideBar(const char* const (&names)[N], int& active, bool same_line = true);
 }

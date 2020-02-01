@@ -57,10 +57,10 @@ void Menu::Render()
 		ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoResize)) {
 
-		const char* CategoryNames[] = {
+		static const char* CategoryNames[] = {
 			"Aim",
 			"Visuals",
-			"Misc",
+			"Player",
 			"Other"
 		};
 
@@ -71,31 +71,23 @@ void Menu::Render()
 			CATEGORY_OTHER
 		};
 
-		static int ActiveTab = 0;
+		static int ActiveTab = CATEGORY_OTHER;
 		ImGui::RenderTabs(CategoryNames, ActiveTab);
 
-		ImGui::BeginGroupBox("##body_content");
-		{
-			switch (ActiveTab) {
-			case CATEGORY_AIM:
-				ImGui::TextDisabled("Nothing to see here");
-				break;
-			case CATEGORY_VISUAL:
-				ImGui::Checkbox("Glow", config.visual_glow);
-				ImGui::Checkbox("Recoil Crosshair", config.visual_recoilCrosshair);
-				ImGui::Checkbox("Sniper Crosshair", config.visual_sniperCrosshair);
-				ImGui::Checkbox("Grenade Prediction", config.visual_grenadePrediction);
-				break;
-			case CATEGORY_PLAYER:
-				ImGui::Checkbox("Bunny Hop", config.misc_bhop);
-				break;
-			case CATEGORY_OTHER:
-				ImGui::TextDisabled("Nothing to see here");
-				break;
-			}
-			
+		switch (ActiveTab) {
+		case CATEGORY_AIM:
+			RenderAimTab();
+			break;
+		case CATEGORY_VISUAL:
+			RenderVisualsTab();
+			break;
+		case CATEGORY_PLAYER:
+			RenderPlayerTab();
+			break;
+		case CATEGORY_OTHER:
+			RenderOthersTab();
+			break;
 		}
-		ImGui::EndGroupBox();
 
 		ImGui::End();
 	}
@@ -127,8 +119,64 @@ void Menu::CreateStyle()
 	ImGui::GetStyle() = _style;
 
 	ImGui::StyleColorsXesa();
-	
-	
+}
+
+void Menu::RenderAimTab()
+{
+	ImGui::BeginGroupBox("#aim_content");
+	{
+		ImGui::TextDisabled("Nothing to see here");
+	}
+	ImGui::EndGroupBox();
+}
+
+void Menu::RenderVisualsTab()
+{
+	static int ActiveTab = 0;
+	static const char* TabNames[] = {
+			"ESP",
+			"Other"
+	};
+	enum Tabs {
+		TAB_ESP,
+		TAB_OTHER,
+	};
+	ImGui::RenderSideBar(TabNames, ActiveTab);
+
+	ImGui::BeginGroupBox("#visuals_content");
+	{
+		switch (ActiveTab) {
+			case TAB_ESP:
+				ImGui::Checkbox("Glow", config.visual_glow);
+				break;
+			case TAB_OTHER:
+				ImGui::Checkbox("Recoil Crosshair", config.visual_recoilCrosshair);
+				ImGui::Checkbox("Sniper Crosshair", config.visual_sniperCrosshair);
+				ImGui::Checkbox("Grenade Prediction", config.visual_grenadePrediction);
+				break;
+		}
+	}
+	ImGui::EndGroupBox();
+}
+
+void Menu::RenderPlayerTab()
+{
+	ImGui::BeginGroupBox("#player_content");
+	{
+		ImGui::Checkbox("Bunny Hop", config.misc_bhop);
+	}
+	ImGui::EndGroupBox();
+}
+
+void Menu::RenderOthersTab()
+{
+	ImGui::BeginGroupBox("#other_content");
+	{
+		if(ImGui::Button("Unload", ImVec2{ 150, 25 })) {
+			_releaseRequested = true;
+		}
+	}
+	ImGui::EndGroupBox();
 }
 
 bool ImGui::BeginGroupBox(const char* name, const ImVec2& size_arg)
@@ -214,7 +262,6 @@ bool ImGui::ToggleButton(const char* label, bool* v, const ImVec2& size_arg)
 template<size_t N>
 void ImGui::RenderTabs(const char* (&names)[N], int& active)
 {
-	//float button_width = (ImGui::GetCurrentWindow()->Size.x - ImGui::GetStyle().WindowPadding.x * (_countof(names) + 1)) / _countof(names);
 	float button_width = (ImGui::GetCurrentWindow()->Size.x - ImGui::GetStyle().WindowPadding.x * (N + 1)) / N;
 	float button_height = 25;
 	bool values[N] = { false };
@@ -228,4 +275,15 @@ void ImGui::RenderTabs(const char* (&names)[N], int& active)
 		if (i < N - 1)
 			ImGui::SameLine();
 	}
+}
+
+
+template<size_t N>
+bool ImGui::RenderSideBar(const char* const (&names)[N], int& active, bool same_line = true)
+{
+	ImGui::PushItemWidth(160.0f);
+	bool result = ImGui::ListBox("", &active, names, IM_ARRAYSIZE(names));
+	ImGui::PopItemWidth();
+	ImGui::SameLine();
+	return result;
 }

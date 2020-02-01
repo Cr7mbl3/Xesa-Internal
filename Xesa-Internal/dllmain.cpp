@@ -58,7 +58,7 @@ DWORD WINAPI Initialize(LPVOID hModule) {
 	std::cout << "Xesa alpha" << std::endl;
 	std::cout << "Built on: " << __DATE__ << " " << __TIME__ << std::endl;
 
-	while (!GetAsyncKeyState(VK_DELETE)) {
+	while (!Menu::Get().isReleaseRequested()) {
 		Sleep(100);
 	}
 
