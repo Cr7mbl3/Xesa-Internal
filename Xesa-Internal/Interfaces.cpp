@@ -52,7 +52,6 @@ T* Interfaces::findInterface(HMODULE hModule, const char* name)
 				if (!foundInterface) {
 					continue;
 				}
-				std::cout << name << " (" << interface_reg->m_pName << "): " << foundInterface << std::endl;
 				return foundInterface;
 			}
 		}

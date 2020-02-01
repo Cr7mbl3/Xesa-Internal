@@ -26,4 +26,7 @@ private:
 namespace ImGui {
 	bool BeginGroupBox(const char* name, const ImVec2& size_arg = ImVec2(0, 0));
 	void EndGroupBox();
+	bool ToggleButton(const char* label, bool* v, const ImVec2& size_arg);
+	template<size_t N>
+	void RenderTabs(const char* (&names)[N], int& active);
 }

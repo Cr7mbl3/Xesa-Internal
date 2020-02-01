@@ -18,15 +18,14 @@ namespace Misc {
 	void SniperCrosshair()
 	{
 		static ConVar* weapon_debug_spread_show = g_Cvar->FindVar("weapon_debug_spread_show");
-		bool expectedValue = config.visual_sniperCrosshair ? 3 : 0;
-		if (expectedValue != weapon_debug_spread_show->GetInt())
-			weapon_debug_spread_show->SetValue(expectedValue);
+		int expected = config.visual_sniperCrosshair ? 2 : 0;
+		if (expected != weapon_debug_spread_show->GetInt())
+			weapon_debug_spread_show->SetValue(expected);
 	}
 
 	void RecoilCrosshair() {
 		static ConVar* cl_crosshair_recoil = g_Cvar->FindVar("cl_crosshair_recoil");
-		if(config.visual_recoilCrosshair != cl_crosshair_recoil->GetBool())
-			cl_crosshair_recoil->SetValue(config.visual_recoilCrosshair);
+		cl_crosshair_recoil->SetValue(config.visual_recoilCrosshair);
 	}
 
 	void BunnyHop(CUserCmd* cmd)

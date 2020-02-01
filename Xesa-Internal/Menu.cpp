@@ -7,7 +7,6 @@
 #include "Interfaces.h"
 #include "Config.h"
 
-
 void Menu::Initialize()
 {
 
@@ -58,13 +57,43 @@ void Menu::Render()
 		ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoResize)) {
 
+		const char* CategoryNames[] = {
+			"Aim",
+			"Visuals",
+			"Misc",
+			"Other"
+		};
+
+		enum Category {
+			CATEGORY_AIM,
+			CATEGORY_VISUAL,
+			CATEGORY_PLAYER,
+			CATEGORY_OTHER
+		};
+
+		static int ActiveTab = 0;
+		ImGui::RenderTabs(CategoryNames, ActiveTab);
+
 		ImGui::BeginGroupBox("##body_content");
 		{
-			ImGui::Checkbox("Glow", config.visual_glow);
-			ImGui::Checkbox("Bunny Hop", config.misc_bhop);
-			ImGui::Checkbox("Recoil Crosshair", config.visual_recoilCrosshair);
-			ImGui::Checkbox("Sniper Crosshair", config.visual_sniperCrosshair);
-			ImGui::Checkbox("Grenade Prediction", config.visual_grenadePrediction);
+			switch (ActiveTab) {
+			case CATEGORY_AIM:
+				ImGui::TextDisabled("Nothing to see here");
+				break;
+			case CATEGORY_VISUAL:
+				ImGui::Checkbox("Glow", config.visual_glow);
+				ImGui::Checkbox("Recoil Crosshair", config.visual_recoilCrosshair);
+				ImGui::Checkbox("Sniper Crosshair", config.visual_sniperCrosshair);
+				ImGui::Checkbox("Grenade Prediction", config.visual_grenadePrediction);
+				break;
+			case CATEGORY_PLAYER:
+				ImGui::Checkbox("Bunny Hop", config.misc_bhop);
+				break;
+			case CATEGORY_OTHER:
+				ImGui::TextDisabled("Nothing to see here");
+				break;
+			}
+			
 		}
 		ImGui::EndGroupBox();
 
@@ -145,4 +174,58 @@ void ImGui::EndGroupBox()
 	ImGui::EndChild();
 	ImGuiWindow* window = ImGui::GetCurrentWindow();
 	window->DC.CursorPosPrevLine.y -= GImGui->FontSize / 2;
+}
+
+bool ImGui::ToggleButton(const char* label, bool* v, const ImVec2& size_arg)
+{
+
+	ImGuiWindow* window = ImGui::GetCurrentWindow();
+	if (window->SkipItems)
+		return false;
+
+	int flags = 0;
+	ImGuiContext& g = *GImGui;
+	const ImGuiStyle& style = g.Style;
+	const ImGuiID id = window->GetID(label);
+	const ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
+
+	ImVec2 pos = window->DC.CursorPos;
+	ImVec2 size = ImGui::CalcItemSize(size_arg, label_size.x + style.FramePadding.x * 2.0f, label_size.y + style.FramePadding.y * 2.0f);
+
+	const ImRect bb(pos, pos + size);
+	ImGui::ItemSize(bb, style.FramePadding.y);
+	if (!ImGui::ItemAdd(bb, id))
+		return false;
+
+	if (window->DC.ItemFlags & ImGuiItemFlags_ButtonRepeat) flags |= ImGuiButtonFlags_Repeat;
+	bool hovered, held;
+	bool pressed = ImGui::ButtonBehavior(bb, id, &hovered, &held, flags);
+
+	// Render
+	const ImU32 col = ImGui::GetColorU32((hovered && held || *v) ? ImGuiCol_ButtonActive : (hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button));
+	ImGui::RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
+	ImGui::RenderTextClipped(bb.Min + style.FramePadding, bb.Max - style.FramePadding, label, NULL, &label_size, style.ButtonTextAlign, &bb);
+	if (pressed)
+		* v = !*v;
+
+	return pressed;
+}
+
+template<size_t N>
+void ImGui::RenderTabs(const char* (&names)[N], int& active)
+{
+	//float button_width = (ImGui::GetCurrentWindow()->Size.x - ImGui::GetStyle().WindowPadding.x * (_countof(names) + 1)) / _countof(names);
+	float button_width = (ImGui::GetCurrentWindow()->Size.x - ImGui::GetStyle().WindowPadding.x * (N + 1)) / N;
+	float button_height = 25;
+	bool values[N] = { false };
+
+	values[active] = true;
+
+	for (auto i = 0; i < N; ++i) {
+		if (ImGui::ToggleButton(names[i], &values[i], ImVec2{ button_width, button_height })) {
+			active = i;
+		}
+		if (i < N - 1)
+			ImGui::SameLine();
+	}
 }
