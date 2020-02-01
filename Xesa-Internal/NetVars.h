@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Singleton.h"
+#include "utils/Singleton.h"
 #include <unordered_map>
 #include "SDK/Recv.h"
 

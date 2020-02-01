@@ -171,7 +171,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Config.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="features\Glow.cpp" />
     <ClCompile Include="features\LagCompensation.cpp" />
@@ -232,8 +231,8 @@
     <ClInclude Include="SDK\Recv.h" />
     <ClInclude Include="SDK\UtlVector.h" />
     <ClInclude Include="SDK\Vector.h" />
-    <ClInclude Include="Singleton.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="utils\Singleton.h" />
     <ClInclude Include="utils\TimeHelper.h" />
     <ClInclude Include="vfunc.h" />
     <ClInclude Include="vfunc_hook.h" />

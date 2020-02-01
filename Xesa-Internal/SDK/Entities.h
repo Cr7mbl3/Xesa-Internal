@@ -50,7 +50,7 @@ public:
 	NETVAR(int, m_ArmorValue, "DT_CSPlayer", "m_ArmorValue");
 	NETVAR(bool, m_bHasHeavyArmor, "DT_CSPlayer", "m_bHasHeavyArmor");
 	NETVAR(bool, m_bHasHelmet, "DT_CSPlayer", "m_bHasHelmet");
-	NETVAR(bool, m_bIsScoped, "DT_CSPlayer", "m_bIsScoped");;
+	NETVAR(bool, m_bIsScoped, "DT_CSPlayer", "m_bIsScoped");
 	NETVAR(float, m_flLowerBodyYawTarget, "DT_CSPlayer", "m_flLowerBodyYawTarget");
 	NETVAR(int32_t, m_iHealth, "DT_BasePlayer", "m_iHealth");
 	NETVAR(int32_t, m_lifeState, "DT_BasePlayer", "m_lifeState");

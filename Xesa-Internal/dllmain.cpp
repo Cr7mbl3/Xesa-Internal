@@ -37,8 +37,9 @@ DWORD WINAPI Initialize(LPVOID hModule) {
 	TimeHelper startup_timer = TimeHelper();
 	TimeHelper timer = TimeHelper();
 
-	Interfaces::Initialize();
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14); //14 for yellow
+
+	Interfaces::Initialize();
 	std::cout << Interfaces::interfaces_count << " Interfaces initialized in " << timer.GetMs() << "ms" << std::endl;
 	timer.Reset();
 
@@ -49,6 +50,7 @@ DWORD WINAPI Initialize(LPVOID hModule) {
 	Menu::Get().Initialize();
 	Hooks::Initialize();
 	std::cout << "Menu and Hooks initialized in " << timer.GetMs() << "ms" << std::endl;
+
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15); //reset color
 
 	std::cout << "Finished in " << startup_timer.GetMs() << "ms!" << std::endl;

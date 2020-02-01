@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Singleton.h"
+#include "utils/Singleton.h"
 #include "imgui/imgui.h"
 
 class Menu : public Singleton<Menu>

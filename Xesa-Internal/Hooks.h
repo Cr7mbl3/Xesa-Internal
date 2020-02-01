@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Singleton.h"
+#include "utils/Singleton.h"
 #include <Windows.h>
 #include "vfunc_hook.h"
 #include "Interfaces.h"

@@ -6,7 +6,7 @@
 #include <d3d9.h>
 
 #include "Utils.h"
-#include "Singleton.h"
+#include "utils/Singleton.h"
 
 #include "SDK/ICvar.h"
 #include "SDK/IBaseClientDLL.h"
