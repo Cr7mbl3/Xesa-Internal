@@ -206,6 +206,7 @@
     <ClInclude Include="SDK\basetypes.h" />
     <ClInclude Include="SDK\CInput.h" />
     <ClInclude Include="SDK\ClientClass.h" />
+    <ClInclude Include="SDK\ClientFrameStage.h" />
     <ClInclude Include="SDK\Color.h" />
     <ClInclude Include="SDK\const.h" />
     <ClInclude Include="SDK\ConVar.h" />

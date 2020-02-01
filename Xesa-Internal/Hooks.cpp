@@ -20,6 +20,7 @@ namespace Hooks {
 		direct3dHook.setup(g_D3DDevice9);
 		surfaceHook.setup(g_Surface);
 		svcheatsHook.setup(g_Cvar->FindVar("sv_cheats"));
+		clientHook.setup(g_Client);
 
 		clientmodeHook.hook_index(index::CreateMove, CreateMove);
 		clientmodeHook.hook_index(index::DoPostScreenEffects, DoPostScreenEffects);
@@ -27,6 +28,7 @@ namespace Hooks {
 		direct3dHook.hook_index(index::Reset, Reset);
 		surfaceHook.hook_index(index::LockCursor, LockCursor);
 		svcheatsHook.hook_index(index::ConVar_GetBool, SvCheatsGetBool);
+		clientHook.hook_index(index::FrameStageNotify, FrameStageNotify);
 	}
 
 	void Release()
@@ -37,6 +39,7 @@ namespace Hooks {
 		direct3dHook.unhook_all();
 		surfaceHook.unhook_all();
 		svcheatsHook.unhook_all();
+		clientHook.unhook_all();
 		SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(originalWndProc));
 	}
 
@@ -158,6 +161,13 @@ namespace Hooks {
 		if (!oGetBool)
 			return false;
 		return reinterpret_cast<DWORD>(_ReturnAddress()) == reinterpret_cast<DWORD>(dwCAM_Think) || oGetBool(pConVar);
+	}
+
+	void __stdcall FrameStageNotify(ClientFrameStage_t stage)
+	{
+		static auto oFrameStageNotify = clientHook.get_original<decltype(&FrameStageNotify)>(index::FrameStageNotify);
+
+		oFrameStageNotify(stage);
 	}
 
 	

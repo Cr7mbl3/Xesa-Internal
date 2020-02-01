@@ -211,5 +211,8 @@
     <ClInclude Include="SDK\GlobalVars.h">
       <Filter>Headerdateien\SDK</Filter>
     </ClInclude>
+    <ClInclude Include="SDK\ClientFrameStage.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
