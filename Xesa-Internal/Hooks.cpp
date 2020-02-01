@@ -157,7 +157,7 @@ namespace Hooks {
 	bool __fastcall SvCheatsGetBool(PVOID pConVar)
 	{
 		static auto dwCAM_Think = Utils::PatternScan(GetModuleHandleW(L"client_panorama.dll"), "85 C0 75 30 38 86");
-		static auto oGetBool = svcheatsHook.get_original<bool(__thiscall*)(PVOID)>(index::ConVar_GetBool); //This crashes when called like other hooks?
+		static auto oGetBool = svcheatsHook.get_original<bool(__thiscall*)(PVOID)>(index::ConVar_GetBool); //This crashes when called like other hooks? TODO: fix, this triggers me
 		if (!oGetBool)
 			return false;
 		return reinterpret_cast<DWORD>(_ReturnAddress()) == reinterpret_cast<DWORD>(dwCAM_Think) || oGetBool(pConVar);

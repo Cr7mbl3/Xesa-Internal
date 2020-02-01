@@ -26,6 +26,15 @@
 
 class CClientMode;
 
+typedef void* (__cdecl* InstantiateInterfaceFn)();
+
+class InterfaceReg {
+public:
+	InstantiateInterfaceFn m_CreateFn;
+	const char* m_pName;
+	InterfaceReg* m_pNext;
+};
+
 SETUP_INTERFACE(ICvar*, g_Cvar);
 SETUP_INTERFACE(IBaseClientDLL*, g_Client);
 SETUP_INTERFACE(CClientMode*, g_ClientMode);
