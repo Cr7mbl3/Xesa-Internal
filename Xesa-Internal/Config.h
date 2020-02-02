@@ -5,6 +5,16 @@
 
 #define VALUE(type, var, value) Var<type> var = { #var, value };
 
+enum Menu_DisplayModes {
+	DISPLAYMODE_PRESENT, 
+	DISPLAYMODE_ENDSCENE
+};
+
+static const char* Menu_DisplayModeNames[] = {
+	"Present",
+	"EndScene"
+};
+
 template <typename T>
 class Var {
 public:
@@ -23,11 +33,15 @@ public:
 class Config
 {
 public:
-	VALUE(bool, visual_glow, true);
-	VALUE(bool, visual_sniperCrosshair, true);
-	VALUE(bool, visual_recoilCrosshair, true);
-	VALUE(bool, visual_grenadePrediction, true);
-	VALUE(bool, misc_bhop, true);
+	VALUE(bool, visual_glow, false);
+	VALUE(bool, visual_sniperCrosshair, false);
+	VALUE(bool, visual_recoilCrosshair, false);
+	VALUE(bool, visual_grenadePrediction, false);
+
+	VALUE(bool, misc_bhop, false);
+	VALUE(bool, misc_fakelag, false);
+
+	VALUE(int, menu_DisplayMode, 0);
 };
 
 inline Config config;

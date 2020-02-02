@@ -16,6 +16,7 @@
 #include "SDK/ISurface.h"
 #include "SDK/GlowOutlineEffect.h"
 #include "SDK/GlobalVars.h"
+#include "SDK/IVEngineClient.h"
 
 #define MODULE(name, libstr) inline HMODULE name = Interfaces::findModule(libstr)
 #define SETUP_INTERFACE(type, name) inline type name = nullptr
@@ -48,6 +49,7 @@ namespace Modules {
 	MODULE(client_panorama, L"client_panorama.dll");
 	MODULE(shaderapidx9, L"shaderapidx9.dll");
 	MODULE(vguimatsurface, L"vguimatsurface.dll");
+	MODULE(engine, L"engine.dll");
 }
 
 SETUP_INTERFACE(ICvar*, g_Cvar);
@@ -58,7 +60,8 @@ SETUP_INTERFACE(ISurface*, g_Surface);
 SETUP_INTERFACE(IDirect3DDevice9*, g_D3DDevice9);
 SETUP_INTERFACE(CInput*, g_Input);
 SETUP_INTERFACE(CGlowObjectManager*, g_GlowObjectManager);
-SETUP_INTERFACE(CGlobalVarsBase*, g_Globals);
+SETUP_INTERFACE(CGlobalVarsBase*, g_GlobalVars);
+SETUP_INTERFACE(IVEngineClient*, g_Engine);
 UNDFEFINED_INTERFACE(C_LocalPlayer, g_LocalPlayer);
 
 

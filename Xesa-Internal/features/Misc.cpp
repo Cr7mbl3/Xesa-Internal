@@ -1,5 +1,7 @@
 #include "Misc.h"
 
+#include <math.h>
+
 #include "../Interfaces.h"
 #include "../Config.h"
 

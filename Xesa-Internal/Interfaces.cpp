@@ -13,9 +13,10 @@ void Interfaces::Initialize()
 	INIT_INTERFACE(g_Client, IBaseClientDLL, Modules::client_panorama, "VClient0");
 	INIT_INTERFACE(g_EntityList, IClientEntityList, Modules::client_panorama, "VClientEntityList0");
 	INIT_INTERFACE(g_Surface, ISurface, Modules::vguimatsurface, "VGUI_Surface0");
+	INIT_INTERFACE(g_Engine, IVEngineClient, Modules::engine, "VEngineClient0");
 
 	OINIT_INTERFACE(g_ClientMode, CClientMode, g_Client, 10, 5);
-	OINIT_INTERFACE(g_Globals, CGlobalVarsBase, g_Client, 0, 27);
+	OINIT_INTERFACE(g_GlobalVars, CGlobalVarsBase, g_Client, 0, 27);
 
 	PATTERN_SCAN(g_D3DDevice9, **(IDirect3DDevice9***), Modules::shaderapidx9, "A1 ? ? ? ? 50 8B 08 FF 51 0C", 1);
 	PATTERN_SCAN(g_Input, *(CInput**), Modules::client_panorama, "B9 ? ? ? ? F3 0F 11 04 24 FF 50 10", 1);

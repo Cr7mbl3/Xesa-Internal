@@ -227,6 +227,7 @@
     <ClInclude Include="SDK\ICvar.h" />
     <ClInclude Include="SDK\IHandleEntity.h" />
     <ClInclude Include="SDK\ISurface.h" />
+    <ClInclude Include="SDK\IVEngineClient.h" />
     <ClInclude Include="SDK\QAngle.h" />
     <ClInclude Include="SDK\Recv.h" />
     <ClInclude Include="SDK\UtlVector.h" />

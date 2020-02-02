@@ -1,6 +1,28 @@
 #include "LagCompensation.h"
 
+#include <math.h>
+
 #include "../Interfaces.h"
+#include "../Config.h"
+
+void LagCompensation::Update()
+{
+	Vector delta = g_LocalPlayer->m_angAbsOrigin() - m_vecLastSendPosition;
+	m_flCurrentTeleportDistanceSqr = delta.length2D();
+}
+
+void LagCompensation::OnProcessCmd(CUserCmd* cmd, bool& bSendPacket)
+{
+	if (bSendPacket) {
+		m_iChockedTicks = 0;
+		m_vecLastSendPosition = g_LocalPlayer->m_angAbsOrigin();
+		m_bChokedLast = false;
+	}
+	else {
+		m_iChockedTicks++;
+		m_bChokedLast = true;
+	}
+}
 
 float LagCompensation::GetLerpTime()
 {
@@ -37,4 +59,16 @@ float LagCompensation::GetLerpTime()
 		return interp;
 	else
 		return v20;
+}
+
+void LagCompensation::FakeLag(bool& bSendPacket)
+{
+	if (!g_LocalPlayer || !config.misc_fakelag)
+		return;
+
+	auto distance_per_tick = g_LocalPlayer->m_vecVelocity().length2D() * g_GlobalVars->interval_per_tick;
+	int shouldChoke = min(std::ceilf( m_flMaxTeleportDistanceSqr / max(1.f, distance_per_tick)), 15);
+
+	if (g_LocalPlayer->m_lifeState() == 0 && m_iChockedTicks <= shouldChoke)
+		bSendPacket = false;
 }

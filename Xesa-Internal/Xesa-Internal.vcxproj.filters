@@ -229,5 +229,8 @@
     <ClInclude Include="utils\Singleton.h">
       <Filter>Headerdateien\utils</Filter>
     </ClInclude>
+    <ClInclude Include="SDK\IVEngineClient.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

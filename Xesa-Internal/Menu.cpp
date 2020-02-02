@@ -161,24 +161,62 @@ void Menu::RenderVisualsTab()
 
 void Menu::RenderPlayerTab()
 {
+	static int ActiveTab = 0;
+	static const char* TabNames[] = {
+		"Movement",
+		"Lag Compensation"
+	};
+	enum Tabs {
+		TAB_MOVEMENT,
+		TAB_LAGCOMPENSATION,
+	};
+	ImGui::RenderSideBar(TabNames, ActiveTab);
+
 	ImGui::BeginGroupBox("#player_content");
 	{
-		ImGui::Checkbox("Bunny Hop", config.misc_bhop);
+		switch (ActiveTab) {
+		case TAB_MOVEMENT:
+			ImGui::Checkbox("Bunny Hop", config.misc_bhop);
+			break;
+		case TAB_LAGCOMPENSATION:
+			ImGui::Checkbox("Fake Lag", config.misc_fakelag);
+			break;
+		}
+		
 	}
 	ImGui::EndGroupBox();
 }
 
 void Menu::RenderOthersTab()
 {
+	static int ActiveTab = 0;
+	static const char* TabNames[] = {
+		"Cheat",
+		"Menu"
+	};
+	enum Tabs {
+		TAB_CHEAT,
+		TAB_MENU,
+	};
+	ImGui::RenderSideBar(TabNames, ActiveTab);
+
 	ImGui::BeginGroupBox("#other_content");
 	{
-		if(ImGui::Button("Unload", ImVec2{ 150, 25 })) {
-			_releaseRequested = true;
+		switch (ActiveTab) {
+		case TAB_CHEAT:
+			if (ImGui::Button("Unload", ImVec2{ 150, 25 })) {
+				_releaseRequested = true;
+			}
+			break;
+		case TAB_MENU:
+			ImGui::Combo("Menu Render Mode", config.menu_DisplayMode, Menu_DisplayModeNames, IM_ARRAYSIZE(Menu_DisplayModeNames));
+			break;
 		}
 	}
 	ImGui::EndGroupBox();
 }
 
+//pasta from CSGOSimple
 bool ImGui::BeginGroupBox(const char* name, const ImVec2& size_arg)
 {
 	ImGuiWindow* window = ImGui::GetCurrentWindow();
@@ -197,7 +235,6 @@ bool ImGui::BeginGroupBox(const char* name, const ImVec2& size_arg)
 	ImGui::SetNextWindowSize(size);
 	bool ret;
 	ImGui::Begin(name, &ret, flags);
-	//bool ret = ImGui::Begin(name, NULL, size, -1.0f, flags);
 
 	window = ImGui::GetCurrentWindow();
 
@@ -207,12 +244,8 @@ bool ImGui::BeginGroupBox(const char* name, const ImVec2& size_arg)
 
 	if (text_size.x > 1.0f) {
 		window->DrawList->PushClipRectFullScreen();
-		//window->DrawList->AddRectFilled(window->DC.CursorPos - ImVec2{ 4, 0 }, window->DC.CursorPos + (text_size + ImVec2{ 4, 0 }), GetColorU32(ImGuiCol_ChildWindowBg));
-		//RenderTextClipped(pos, pos + text_size, name, NULL, NULL, GetColorU32(ImGuiCol_Text));
 		window->DrawList->PopClipRect();
 	}
-	//if (!(window->Flags & ImGuiWindowFlags_ShowBorders))
-	//	ImGui::GetCurrentWindow()->Flags &= ~ImGuiWindowFlags_ShowBorders;
 
 	return ret;
 }
@@ -279,11 +312,12 @@ void ImGui::RenderTabs(const char* (&names)[N], int& active)
 
 
 template<size_t N>
-bool ImGui::RenderSideBar(const char* const (&names)[N], int& active, bool same_line = true)
+bool ImGui::RenderSideBar(const char* const (&names)[N], int& active, bool same_line)
 {
 	ImGui::PushItemWidth(160.0f);
 	bool result = ImGui::ListBox("", &active, names, IM_ARRAYSIZE(names));
 	ImGui::PopItemWidth();
-	ImGui::SameLine();
+	if(same_line)
+		ImGui::SameLine();
 	return result;
 }

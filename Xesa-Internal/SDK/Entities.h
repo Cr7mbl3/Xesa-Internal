@@ -76,6 +76,38 @@ public:
 	NETVAR(float, m_flDuckAmount, "DT_BaseEntity", "m_flDuckAmount");
 };
 
+class C_BaseAttributableItem : public C_BaseEntity
+{
+public:
+
+	NETVAR(int32_t, m_iItemDefinitionIndex, "CBaseAttributableItem", "m_iItemDefinitionIndex");
+	NETVAR(int32_t, m_nFallbackStatTrak, "CBaseAttributableItem", "m_nFallbackStatTrak");
+	NETVAR(int32_t, m_nFallbackPaintKit, "CBaseAttributableItem", "m_nFallbackPaintKit");
+	NETVAR(int32_t, m_nFallbackSeed, "CBaseAttributableItem", "m_nFallbackSeed");
+	NETVAR(float_t, m_flFallbackWear, "CBaseAttributableItem", "m_flFallbackWear");
+	NETVAR(int32_t, m_iAccountID, "CBaseAttributableItem", "m_iAccountID");
+	NETVAR(int32_t, m_iItemIDHigh, "CBaseAttributableItem", "m_iItemIDHigh");
+	NETVAR(int32_t, m_iEntityQuality, "CBaseAttributableItem", "m_iEntityQuality");
+	PTRNETVAR(char, m_szCustomName, "CBaseAttributableItem", "m_szCustomName");
+};
+
+class C_BaseCombatWeapon : public C_BaseAttributableItem
+{
+public:
+
+	NETVAR(float_t, m_flNextPrimaryAttack, "CBaseCombatWeapon", "m_flNextPrimaryAttack");
+	NETVAR(int32_t, m_iItemDefinitionIndex, "CBaseCombatWeapon", "m_iItemDefinitionIndex");
+	NETVAR(int32_t, m_iClip1, "CBaseCombatWeapon", "m_iClip1");
+	NETVAR(int32_t, m_iViewModelIndex, "CBaseCombatWeapon", "m_iViewModelIndex");
+	NETVAR(int32_t, m_iWorldModelIndex, "CBaseCombatWeapon", "m_iWorldModelIndex");
+	NETVAR(float_t, m_fAccuracyPenalty, "CWeaponCSBase", "m_fAccuracyPenalty");
+	NETVAR(int32_t, m_zoomLevel, "CWeaponCSBaseGun", "m_zoomLevel");
+	NETVAR(bool, m_bPinPulled, "CBaseCSGrenade", "m_bPinPulled");
+	NETVAR(float_t, m_fThrowTime, "CBaseCSGrenade", "m_fThrowTime");
+	NETVAR(float_t, m_flPostponeFireReadyTime, "CWeaponCSBase", "m_flPostponeFireReadyTime");
+	NETVAR(float_t, m_fLastShotTime, "CWeaponCSBase", "m_fLastShotTime");
+};
+
 class C_LocalPlayer
 {
 	friend bool operator==(const C_LocalPlayer& lhs, void* rhs);
