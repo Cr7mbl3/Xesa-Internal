@@ -17,6 +17,7 @@
 #include "SDK/GlowOutlineEffect.h"
 #include "SDK/GlobalVars.h"
 #include "SDK/IVEngineClient.h"
+#include "SDK/IPrediction.h"
 
 #define MODULE(name, libstr) inline HMODULE name = Interfaces::findModule(libstr)
 #define SETUP_INTERFACE(type, name) inline type name = nullptr
@@ -62,6 +63,9 @@ SETUP_INTERFACE(CInput*, g_Input);
 SETUP_INTERFACE(CGlowObjectManager*, g_GlowObjectManager);
 SETUP_INTERFACE(CGlobalVarsBase*, g_GlobalVars);
 SETUP_INTERFACE(IVEngineClient*, g_Engine);
+SETUP_INTERFACE(IPrediction*, g_Prediction);
+SETUP_INTERFACE(CGameMovement*, g_GameMovement);
+SETUP_INTERFACE(IMoveHelper*, g_MoveHelper);
 UNDFEFINED_INTERFACE(C_LocalPlayer, g_LocalPlayer);
 
 

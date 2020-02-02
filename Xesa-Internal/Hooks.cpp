@@ -11,6 +11,7 @@
 #include "features/Misc.h"
 #include "features/Glow.h"
 #include "features/LagCompensation.h"
+#include "features/EnginePrediction.h"
 
 #include "Config.h"
 
@@ -84,6 +85,12 @@ namespace Hooks {
 			Misc::RecoilCrosshair();
 		}
 		Misc::BunnyHop(cmd);
+
+		EnginePrediction::StartPrediction(cmd); {
+
+
+
+		} EnginePrediction::EndPrediction();
 
 		LagCompensation::Get().FakeLag(bSendPacket);
 		LagCompensation::Get().OnProcessCmd(cmd, bSendPacket);

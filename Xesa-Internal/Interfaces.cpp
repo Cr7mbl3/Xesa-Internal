@@ -14,6 +14,8 @@ void Interfaces::Initialize()
 	INIT_INTERFACE(g_EntityList, IClientEntityList, Modules::client_panorama, "VClientEntityList0");
 	INIT_INTERFACE(g_Surface, ISurface, Modules::vguimatsurface, "VGUI_Surface0");
 	INIT_INTERFACE(g_Engine, IVEngineClient, Modules::engine, "VEngineClient0");
+	INIT_INTERFACE(g_Prediction, IPrediction, Modules::client_panorama, "VClientPrediction0");
+	INIT_INTERFACE(g_GameMovement, CGameMovement, Modules::client_panorama, "GameMovement0");
 
 	OINIT_INTERFACE(g_ClientMode, CClientMode, g_Client, 10, 5);
 	OINIT_INTERFACE(g_GlobalVars, CGlobalVarsBase, g_Client, 0, 27);
@@ -22,6 +24,7 @@ void Interfaces::Initialize()
 	PATTERN_SCAN(g_Input, *(CInput**), Modules::client_panorama, "B9 ? ? ? ? F3 0F 11 04 24 FF 50 10", 1);
 	PATTERN_SCAN(g_LocalPlayer, *(C_LocalPlayer*), Modules::client_panorama, "8B 0D ? ? ? ? 83 FF FF 74 07", 2);
 	PATTERN_SCAN(g_GlowObjectManager, *(CGlowObjectManager**), Modules::client_panorama, "0F 11 05 ? ? ? ? 83 C8 01", 3);
+	PATTERN_SCAN(g_MoveHelper, **(IMoveHelper * **), Modules::client_panorama, "8B 0D ? ? ? ? 8B 45 ? 51 8B D4 89 02 8B 01", 2);
 }
 
 HMODULE Interfaces::findModule(const wchar_t* name)

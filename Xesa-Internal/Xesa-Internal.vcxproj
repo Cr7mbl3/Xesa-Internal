@@ -172,6 +172,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="features\EnginePrediction.cpp" />
     <ClCompile Include="features\Glow.cpp" />
     <ClCompile Include="features\LagCompensation.cpp" />
     <ClCompile Include="features\Misc.cpp" />
@@ -184,12 +185,14 @@
     <ClCompile Include="Interfaces.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="NetVars.cpp" />
+    <ClCompile Include="SDK\checksum_md5.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="utils\TimeHelper.cpp" />
     <ClCompile Include="vfunc_hook.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
+    <ClInclude Include="features\EnginePrediction.h" />
     <ClInclude Include="features\Glow.h" />
     <ClInclude Include="features\LagCompensation.h" />
     <ClInclude Include="features\Misc.h" />
@@ -206,6 +209,7 @@
     <ClInclude Include="Menu.h" />
     <ClInclude Include="NetVars.h" />
     <ClInclude Include="SDK\basetypes.h" />
+    <ClInclude Include="SDK\checksum_md5.h" />
     <ClInclude Include="SDK\CInput.h" />
     <ClInclude Include="SDK\ClientClass.h" />
     <ClInclude Include="SDK\ClientFrameStage.h" />
@@ -226,6 +230,8 @@
     <ClInclude Include="SDK\ICollideable.h" />
     <ClInclude Include="SDK\ICvar.h" />
     <ClInclude Include="SDK\IHandleEntity.h" />
+    <ClInclude Include="SDK\IMoveHelper.h" />
+    <ClInclude Include="SDK\IPrediction.h" />
     <ClInclude Include="SDK\ISurface.h" />
     <ClInclude Include="SDK\IVEngineClient.h" />
     <ClInclude Include="SDK\QAngle.h" />

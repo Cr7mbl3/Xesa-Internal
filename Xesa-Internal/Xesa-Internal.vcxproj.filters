@@ -36,6 +36,9 @@
     <Filter Include="Quelldateien\utils">
       <UniqueIdentifier>{54a394b4-2090-4866-8903-e2d8a4d57b4a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Quelldateien\SDK">
+      <UniqueIdentifier>{2b72c9c5-4aeb-4bcf-8e87-29c6295b4df8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -85,6 +88,12 @@
     </ClCompile>
     <ClCompile Include="utils\TimeHelper.cpp">
       <Filter>Quelldateien\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="features\EnginePrediction.cpp">
+      <Filter>Quelldateien\features</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\checksum_md5.cpp">
+      <Filter>Quelldateien\SDK</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -231,6 +240,18 @@
     </ClInclude>
     <ClInclude Include="SDK\IVEngineClient.h">
       <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="features\EnginePrediction.h">
+      <Filter>Headerdateien\features</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IPrediction.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IMoveHelper.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\checksum_md5.h">
+      <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
