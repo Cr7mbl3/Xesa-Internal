@@ -8,7 +8,7 @@ class LagCompensation : public Singleton<LagCompensation> {
 private:
 	float m_flMaxTeleportDistanceSqr = 64.f;
 	float m_flCurrentTeleportDistanceSqr = 0.f;
-	int m_iChockedTicks;
+	int m_iChokedTicks;
 	Vector m_vecLastSendPosition;
 	bool m_bChokedLast;
 public:

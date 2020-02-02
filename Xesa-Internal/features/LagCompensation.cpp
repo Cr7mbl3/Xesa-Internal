@@ -14,12 +14,12 @@ void LagCompensation::Update()
 void LagCompensation::OnProcessCmd(CUserCmd* cmd, bool& bSendPacket)
 {
 	if (bSendPacket) {
-		m_iChockedTicks = 0;
+		m_iChokedTicks = 0;
 		m_vecLastSendPosition = g_LocalPlayer->m_angAbsOrigin();
 		m_bChokedLast = false;
 	}
 	else {
-		m_iChockedTicks++;
+		m_iChokedTicks++;
 		m_bChokedLast = true;
 	}
 }
@@ -66,9 +66,10 @@ void LagCompensation::FakeLag(bool& bSendPacket)
 	if (!g_LocalPlayer || !config.misc_fakelag)
 		return;
 
-	auto distance_per_tick = g_LocalPlayer->m_vecVelocity().length2D() * g_GlobalVars->interval_per_tick;
-	int shouldChoke = min(std::ceilf( m_flMaxTeleportDistanceSqr / max(1.f, distance_per_tick)), 15);
+	//auto distance_per_tick = g_LocalPlayer->m_vecVelocity().length2D() * g_GlobalVars->interval_per_tick;
+	//int shouldChoke = min(std::ceilf( m_flMaxTeleportDistanceSqr / max(1.f, distance_per_tick)), 15);
+	int shouldChoke = 5;
 
-	if (g_LocalPlayer->m_lifeState() == 0 && m_iChockedTicks <= shouldChoke)
+	if (g_LocalPlayer->m_lifeState() == 0 && m_iChokedTicks <= shouldChoke)
 		bSendPacket = false;
 }
