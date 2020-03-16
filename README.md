@@ -1,13 +1,14 @@
 # Xesa-Internal
-CS:GO cheat by Cr7mbl3 and Stortex, currently in alpha
+CS:GO cheat by Cr7mbl3, currently in alpha
 
 # ToDo:
-
-Source
-- Engine Prediction
-- ThirdPerson view angles adapt to server rotation/hitbox
-
-Features
-- ThirdPerson
+- Resolver
+- Animation fix
+- Backtrack
+- better Anti-Aim
 - SkinChanger
-- Legit Aimbot, Rage Aimbot (including AntiAim, AnimFix?, no interpolation and Fake Lag fix)
+- Legit Aimbot
+
+# Do you want to help me developing this cheat?
+- join as Collaborator via messaging me on Discord: Cr7mbl3#0262 
+- report issues and request features
