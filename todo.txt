@@ -1,8 +1,0 @@
-humanized aimbot
-humanized bunnyhop
-removals
-blockbot
-visuals
-aa disable on nade and before/after round
-freestanding aa
-aimbot multipoint
