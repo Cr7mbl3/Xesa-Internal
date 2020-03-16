@@ -13,6 +13,10 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
+# Backups
+[Bb]ackup/
+Xesa-Internal - Kopie/
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
