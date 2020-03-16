@@ -9,6 +9,7 @@ CS:GO cheat by Cr7mbl3, currently in alpha
 - SkinChanger
 - humanized (legit) Aimbot
 - humanized BunnyHop
+- AutoStrafe
 - BlockBot
 
 # Do you want to help me developing this cheat?
