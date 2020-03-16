@@ -6,59 +6,85 @@
 #include <d3d9.h>
 
 #include "Utils.h"
-#include "Singleton.h"
+#include "utils/Singleton.h"
 
+#include "SDK/Entities.h"
 #include "SDK/ICvar.h"
 #include "SDK/IBaseClientDLL.h"
 #include "SDK/IClientEntityList.h"
 #include "SDK/CInput.h"
-#include "SDK/Entities.h"
 #include "SDK/ISurface.h"
 #include "SDK/GlowOutlineEffect.h"
 #include "SDK/GlobalVars.h"
+#include "SDK/IVEngineClient.h"
+#include "SDK/IPrediction.h"
+#include "SDK/IEngineTrace.h"
+#include "SDK/IVModelInfoClient.h"
+#include "SDK/IPhysics.h"
+#include "SDK/IClientMode.h"
+#include "SDK/IInputSystem.h"
+#include "SDK/IGameEventManager.h"
+#include "SDK/IViewRenderBeams.h"
+#include "SDK/IVModelRenderer.h"
+#include "SDK/IMaterialSystem.h"
 
-class CClientMode;
+#define MODULE(name, libstr) inline HMODULE name = Interfaces::findModule(libstr)
+#define SETUP_INTERFACE(type, name) inline type name = nullptr
+#define UNDFEFINED_INTERFACE(type, name) inline type name
+#define INIT_INTERFACE(name, type, modulename, version) name = Interfaces::findInterface<type>(modulename, version); interfaces_count++
+#define OINIT_INTERFACE(name, type, base, index, offset) name = **reinterpret_cast<type***>((*reinterpret_cast<uintptr_t**>(base))[index] + offset); interfaces_count++
+#define PATTERN_SCAN(name, type, module, pattern, offset) name = type(Utils::PatternScan(module, pattern) + offset); interfaces_count++;
 
-class Interfaces : public Singleton<Interfaces>
-{
-	HMODULE vstdlib = findModule(L"vstdlib");
-	HMODULE client_panorama = findModule(L"client_panorama.dll");
-	HMODULE shaderapidx9 = findModule(L"shaderapidx9.dll");
-	HMODULE vguimatsurface = findModule(L"vguimatsurface.dll");
+typedef void* (__cdecl* InstantiateInterfaceFn)();
+class IViewRender;
+
+class InterfaceReg {
 public:
-	ICvar* Cvar = findInterface<ICvar>(vstdlib, "VEngineCvar007");
-	IBaseClientDLL* Client = findInterface<IBaseClientDLL>(client_panorama, "VClient018");
-	CClientMode* ClientMode = **reinterpret_cast<CClientMode***>((*reinterpret_cast<uintptr_t**>(Client))[10] + 5);
-	IClientEntityList* EntityList = findInterface<IClientEntityList>(client_panorama, "VClientEntityList003");
-	ISurface* Surface = findInterface<ISurface>(vguimatsurface, "VGUI_Surface031");
-
-	IDirect3DDevice9* D3DDevice9 = **(IDirect3DDevice9***)(Utils::PatternScan(shaderapidx9, "A1 ? ? ? ? 50 8B 08 FF 51 0C") + 1);
-	CInput* Input = *(CInput**)(Utils::PatternScan(client_panorama, "B9 ? ? ? ? F3 0F 11 04 24 FF 50 10") + 1);
-	C_LocalPlayer LocalPlayer = *(C_LocalPlayer*)(Utils::PatternScan(client_panorama, "8B 0D ? ? ? ? 83 FF FF 74 07") + 2);
-	CGlowObjectManager* GlowObjectManager = *(CGlowObjectManager**)(Utils::PatternScan(client_panorama, "0F 11 05 ? ? ? ? 83 C8 01") + 3);
-	CGlobalVarsBase* GlobalVars = **reinterpret_cast<CGlobalVarsBase***>((*reinterpret_cast<uintptr_t**>(Client))[0] + 27);
-
-	static HMODULE findModule(const wchar_t* name) noexcept 
-	{
-		HMODULE hModule = GetModuleHandleW(name);
-		if (!hModule) {
-			MessageBoxA(nullptr, (std::ostringstream{} << "Cannot find " << name << " module!").str().c_str(), "Xesa", MB_OK | MB_ICONERROR);
-			std::exit(EXIT_FAILURE);
-		}
-		return hModule;
-	}
-
-	//edited pasterino from Osiris
-	template <typename T>
-	static auto findInterface(HMODULE hModule, const char* name) noexcept
-	{
-		T* foundInterface = reinterpret_cast<std::add_pointer_t<T * (const char* name, int* returnCode)>>(GetProcAddress(hModule, "CreateInterface"))(name, nullptr);
-
-		if (!foundInterface) {
-			MessageBoxA(nullptr, (std::ostringstream{} << "Cannot find " << name << " interface!").str().c_str(), "Xesa", MB_OK | MB_ICONERROR);
-			std::exit(EXIT_FAILURE);
-		}
-
-		return foundInterface;
-	}
+	InstantiateInterfaceFn m_CreateFn;
+	const char* m_pName;
+	InterfaceReg* m_pNext;
 };
+
+namespace Interfaces {
+	inline int interfaces_count;
+	void Initialize();
+	HMODULE findModule(const wchar_t*);
+	template <typename T>
+	T* findInterface(HMODULE, const char*);
+}
+
+namespace Modules {
+	MODULE(vstdlib, L"vstdlib");
+	MODULE(client_panorama, L"client_panorama.dll");
+	MODULE(shaderapidx9, L"shaderapidx9.dll");
+	MODULE(vguimatsurface, L"vguimatsurface.dll");
+	MODULE(engine, L"engine.dll");
+	MODULE(vphysics, L"vphysics.dll");
+	MODULE(inputsystem, L"inputsystem.dll");
+	MODULE(materialsystem, L"materialsystem.dll");
+}
+
+SETUP_INTERFACE(ICvar*, g_Cvar);
+SETUP_INTERFACE(IBaseClientDLL*, g_Client);
+SETUP_INTERFACE(IClientMode*, g_ClientMode);
+SETUP_INTERFACE(IClientEntityList*, g_EntityList);
+SETUP_INTERFACE(ISurface*, g_Surface);
+SETUP_INTERFACE(IDirect3DDevice9*, g_D3DDevice9);
+SETUP_INTERFACE(CInput*, g_Input);
+SETUP_INTERFACE(CGlowObjectManager*, g_GlowObjectManager);
+SETUP_INTERFACE(CGlobalVarsBase*, g_GlobalVars);
+SETUP_INTERFACE(IVEngineClient*, g_Engine);
+SETUP_INTERFACE(IPrediction*, g_Prediction);
+SETUP_INTERFACE(CGameMovement*, g_GameMovement);
+SETUP_INTERFACE(IMoveHelper*, g_MoveHelper);
+SETUP_INTERFACE(IEngineTrace*, g_EngineTrace);
+SETUP_INTERFACE(IVModelInfo*, g_ModelInfo);
+SETUP_INTERFACE(IPhysicsSurfaceProps*, g_PhysicsSurface);
+SETUP_INTERFACE(IInputSystem*, g_InputSystem);
+SETUP_INTERFACE(IGameEventManager2*, g_GameEventManager);
+SETUP_INTERFACE(IViewRenderBeams*, g_ViewRenderBeams);
+SETUP_INTERFACE(IVModelRender*, g_ModelRender);
+SETUP_INTERFACE(IMaterialSystem*, g_MaterialSystem);
+SETUP_INTERFACE(IViewRender*, g_ViewRender);
+
+UNDFEFINED_INTERFACE(C_LocalPlayer, g_LocalPlayer);

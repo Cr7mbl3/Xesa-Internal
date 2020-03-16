@@ -96,7 +96,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;IMGUI_DEFINE_MATH_OPERATORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
@@ -171,25 +171,49 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Config.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="features\Aimbot.cpp" />
+    <ClCompile Include="features\AimHelper.cpp" />
+    <ClCompile Include="features\AntiAim.cpp" />
+    <ClCompile Include="features\BulletBeams.cpp" />
+    <ClCompile Include="features\Chams.cpp" />
+    <ClCompile Include="features\EnginePrediction.cpp" />
     <ClCompile Include="features\Glow.cpp" />
+    <ClCompile Include="features\LagCompensation.cpp" />
     <ClCompile Include="features\Misc.cpp" />
+    <ClCompile Include="features\Resolver.cpp" />
+    <ClCompile Include="features\WallHelper.cpp" />
     <ClCompile Include="Hooks.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="imgui\impl\imgui_impl_dx9.cpp" />
     <ClCompile Include="imgui\impl\imgui_impl_win32.cpp" />
+    <ClCompile Include="Interfaces.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="NetVars.cpp" />
+    <ClCompile Include="SDK\CBaseAnimState.cpp" />
+    <ClCompile Include="SDK\checksum_md5.cpp" />
+    <ClCompile Include="SDK\Entities.cpp" />
+    <ClCompile Include="SDK\Vector4D.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="utils\Math.cpp" />
+    <ClCompile Include="utils\TimeHelper.cpp" />
     <ClCompile Include="vfunc_hook.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
+    <ClInclude Include="features\Aimbot.h" />
+    <ClInclude Include="features\AimHelper.h" />
+    <ClInclude Include="features\AntiAim.h" />
+    <ClInclude Include="features\BulletBeams.h" />
+    <ClInclude Include="features\Chams.h" />
+    <ClInclude Include="features\EnginePrediction.h" />
     <ClInclude Include="features\Glow.h" />
+    <ClInclude Include="features\LagCompensation.h" />
     <ClInclude Include="features\Misc.h" />
+    <ClInclude Include="features\Resolver.h" />
+    <ClInclude Include="features\WallHelper.h" />
     <ClInclude Include="Hooks.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
@@ -202,33 +226,56 @@
     <ClInclude Include="Interfaces.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="NetVars.h" />
-    <ClInclude Include="SDK\basetypes.h" />
+    <ClInclude Include="SDK\BaseHandle.h" />
+    <ClInclude Include="SDK\CBaseAnimState.h" />
+    <ClInclude Include="SDK\checksum_md5.h" />
     <ClInclude Include="SDK\CInput.h" />
+    <ClInclude Include="SDK\ClassIDs.h" />
     <ClInclude Include="SDK\ClientClass.h" />
+    <ClInclude Include="SDK\ClientFrameStage.h" />
     <ClInclude Include="SDK\Color.h" />
-    <ClInclude Include="SDK\const.h" />
     <ClInclude Include="SDK\ConVar.h" />
     <ClInclude Include="SDK\CUserCmd.h" />
+    <ClInclude Include="SDK\EHandle.h" />
     <ClInclude Include="SDK\Entities.h" />
     <ClInclude Include="SDK\GlobalVars.h" />
     <ClInclude Include="SDK\GlowOutlineEffect.h" />
+    <ClInclude Include="SDK\IAppSystem.h" />
     <ClInclude Include="SDK\IBaseClientDLL.h" />
     <ClInclude Include="SDK\IClientEntity.h" />
     <ClInclude Include="SDK\IClientEntityList.h" />
+    <ClInclude Include="SDK\IClientMode.h" />
     <ClInclude Include="SDK\IClientNetworkable.h" />
     <ClInclude Include="SDK\IClientRenderable.h" />
     <ClInclude Include="SDK\IClientThinkable.h" />
     <ClInclude Include="SDK\IClientUnknown.h" />
     <ClInclude Include="SDK\ICollideable.h" />
     <ClInclude Include="SDK\ICvar.h" />
+    <ClInclude Include="SDK\IEngineTrace.h" />
+    <ClInclude Include="SDK\IGameEventManager.h" />
     <ClInclude Include="SDK\IHandleEntity.h" />
+    <ClInclude Include="SDK\IInputSystem.h" />
+    <ClInclude Include="SDK\IMaterialSystem.h" />
+    <ClInclude Include="SDK\IMoveHelper.h" />
+    <ClInclude Include="SDK\IPhysics.h" />
+    <ClInclude Include="SDK\IPrediction.h" />
     <ClInclude Include="SDK\ISurface.h" />
+    <ClInclude Include="SDK\ItemDefinitionIndexes.h" />
+    <ClInclude Include="SDK\IVEngineClient.h" />
+    <ClInclude Include="SDK\IViewRenderBeams.h" />
+    <ClInclude Include="SDK\IVModelInfoClient.h" />
+    <ClInclude Include="SDK\IVModelRenderer.h" />
     <ClInclude Include="SDK\QAngle.h" />
     <ClInclude Include="SDK\Recv.h" />
+    <ClInclude Include="SDK\Studio.h" />
     <ClInclude Include="SDK\UtlVector.h" />
     <ClInclude Include="SDK\Vector.h" />
-    <ClInclude Include="Singleton.h" />
+    <ClInclude Include="SDK\Vector4D.h" />
+    <ClInclude Include="SDK\VMatrix.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="utils\Math.h" />
+    <ClInclude Include="utils\Singleton.h" />
+    <ClInclude Include="utils\TimeHelper.h" />
     <ClInclude Include="vfunc.h" />
     <ClInclude Include="vfunc_hook.h" />
   </ItemGroup>

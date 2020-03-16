@@ -54,7 +54,7 @@ public:
 		try {
 			if (old_vftbl != nullptr) {
 				auto guard = detail::protect_guard{ class_base, sizeof(std::uintptr_t), PAGE_READWRITE };
-				*(std::uintptr_t * *)class_base = old_vftbl;
+				*(std::uintptr_t**)class_base = old_vftbl;
 				old_vftbl = nullptr;
 			}
 		}

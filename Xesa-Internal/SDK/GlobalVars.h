@@ -1,5 +1,7 @@
 #pragma once
 
+class CUserCmd;
+
 //pasta from CSGOSimple
 class CGlobalVarsBase
 {

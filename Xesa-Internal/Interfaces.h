@@ -8,16 +8,27 @@
 #include "Utils.h"
 #include "utils/Singleton.h"
 
+#include "SDK/Entities.h"
 #include "SDK/ICvar.h"
 #include "SDK/IBaseClientDLL.h"
 #include "SDK/IClientEntityList.h"
 #include "SDK/CInput.h"
-#include "SDK/Entities.h"
 #include "SDK/ISurface.h"
 #include "SDK/GlowOutlineEffect.h"
 #include "SDK/GlobalVars.h"
 #include "SDK/IVEngineClient.h"
 #include "SDK/IPrediction.h"
+#include "SDK/IEngineTrace.h"
+#include "SDK/IVModelInfoClient.h"
+#include "SDK/IPhysics.h"
+#include "SDK/IClientMode.h"
+#include "SDK/IInputSystem.h"
+#include "SDK/IGameEventManager.h"
+#include "SDK/IViewRenderBeams.h"
+#include "SDK/IVModelRenderer.h"
+#include "SDK/IMaterialSystem.h"
+#include "SDK/RenderView.h"
+#include "SDK/IPanel.h"
 
 #define MODULE(name, libstr) inline HMODULE name = Interfaces::findModule(libstr)
 #define SETUP_INTERFACE(type, name) inline type name = nullptr
@@ -26,9 +37,8 @@
 #define OINIT_INTERFACE(name, type, base, index, offset) name = **reinterpret_cast<type***>((*reinterpret_cast<uintptr_t**>(base))[index] + offset); interfaces_count++
 #define PATTERN_SCAN(name, type, module, pattern, offset) name = type(Utils::PatternScan(module, pattern) + offset); interfaces_count++;
 
-class CClientMode;
-
 typedef void* (__cdecl* InstantiateInterfaceFn)();
+class IViewRender;
 
 class InterfaceReg {
 public:
@@ -51,11 +61,15 @@ namespace Modules {
 	MODULE(shaderapidx9, L"shaderapidx9.dll");
 	MODULE(vguimatsurface, L"vguimatsurface.dll");
 	MODULE(engine, L"engine.dll");
+	MODULE(vphysics, L"vphysics.dll");
+	MODULE(inputsystem, L"inputsystem.dll");
+	MODULE(materialsystem, L"materialsystem.dll");
+	MODULE(vgui2, L"vgui2.dll");
 }
 
 SETUP_INTERFACE(ICvar*, g_Cvar);
 SETUP_INTERFACE(IBaseClientDLL*, g_Client);
-SETUP_INTERFACE(CClientMode*, g_ClientMode);
+SETUP_INTERFACE(IClientMode*, g_ClientMode);
 SETUP_INTERFACE(IClientEntityList*, g_EntityList);
 SETUP_INTERFACE(ISurface*, g_Surface);
 SETUP_INTERFACE(IDirect3DDevice9*, g_D3DDevice9);
@@ -66,6 +80,16 @@ SETUP_INTERFACE(IVEngineClient*, g_Engine);
 SETUP_INTERFACE(IPrediction*, g_Prediction);
 SETUP_INTERFACE(CGameMovement*, g_GameMovement);
 SETUP_INTERFACE(IMoveHelper*, g_MoveHelper);
+SETUP_INTERFACE(IEngineTrace*, g_EngineTrace);
+SETUP_INTERFACE(IVModelInfo*, g_ModelInfo);
+SETUP_INTERFACE(IPhysicsSurfaceProps*, g_PhysicsSurface);
+SETUP_INTERFACE(IInputSystem*, g_InputSystem);
+SETUP_INTERFACE(IGameEventManager2*, g_GameEventManager);
+SETUP_INTERFACE(IViewRenderBeams*, g_ViewRenderBeams);
+SETUP_INTERFACE(IVModelRender*, g_ModelRender);
+SETUP_INTERFACE(IMaterialSystem*, g_MaterialSystem);
+SETUP_INTERFACE(IViewRender*, g_ViewRender);
+SETUP_INTERFACE(CRenderView*, g_RenderView);
+SETUP_INTERFACE(IPanel*, g_VGuiPanel);
+
 UNDFEFINED_INTERFACE(C_LocalPlayer, g_LocalPlayer);
-
-

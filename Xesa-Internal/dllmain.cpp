@@ -37,9 +37,11 @@ DWORD WINAPI Initialize(LPVOID hModule) {
 	TimeHelper startup_timer = TimeHelper();
 	TimeHelper timer = TimeHelper();
 
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14); //14 for yellow
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10); //10 for green
 
 	Interfaces::Initialize();
+
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14); //14 for yellow
 	std::cout << Interfaces::interfaces_count << " Interfaces initialized in " << timer.GetMs() << "ms" << std::endl;
 	timer.Reset();
 

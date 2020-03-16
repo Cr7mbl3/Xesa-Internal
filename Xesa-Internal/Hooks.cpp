@@ -1,10 +1,18 @@
 #include "Hooks.h"
 
 #include <intrin.h>
-
-#include "SDK/CUserCmd.h"
+#include <algorithm>
+#include <iostream>
+#include <functional>
 
 #include "Menu.h"
+#include "Config.h"
+
+#include "utils/Math.h"
+
+#include "SDK/CUserCmd.h"
+#include "SDK/IPhysics.h"
+
 #include "imgui/impl/imgui_impl_dx9.h"
 #include "imgui/impl/imgui_impl_win32.h"
 
@@ -12,8 +20,11 @@
 #include "features/Glow.h"
 #include "features/LagCompensation.h"
 #include "features/EnginePrediction.h"
-
-#include "Config.h"
+#include "features/Aimbot.h"
+#include "features/AntiAim.h"
+#include "features/BulletBeams.h"
+#include "features/Chams.h"
+#include "features/Resolver.h"
 
 namespace Hooks {
 
@@ -25,6 +36,10 @@ namespace Hooks {
 		surfaceHook.setup(g_Surface);
 		svcheatsHook.setup(g_Cvar->FindVar("sv_cheats"));
 		clientHook.setup(g_Client);
+		viewrenderHook.setup(g_ViewRender);
+		modelrenderHook.setup(g_ModelRender);
+		bspqueryHook.setup(g_Engine->GetBSPTreeQuery());
+		vguipanelHook.setup(g_VGuiPanel);
 
 		clientmodeHook.hook_index(index::CreateMove, CreateMove);
 		clientmodeHook.hook_index(index::DoPostScreenEffects, DoPostScreenEffects);
@@ -34,17 +49,29 @@ namespace Hooks {
 		surfaceHook.hook_index(index::LockCursor, LockCursor);
 		svcheatsHook.hook_index(index::ConVar_GetBool, SvCheatsGetBool);
 		clientHook.hook_index(index::FrameStageNotify, FrameStageNotify);
+		clientmodeHook.hook_index(index::OverrideView, OverrideView);
+		viewrenderHook.hook_index(index::RenderSmokeOverlay, RenderSmokeOverlay);
+		modelrenderHook.hook_index(index::DrawModelExecute, DrawModelExecute);
+		bspqueryHook.hook_index(index::ListLeavesInBox, ListLeavesInBox);
+		vguipanelHook.hook_index(index::PaintTraverse, PaintTraverse);
+
+		BulletBeams::Get().Initialize();
 	}
 
 	void Release()
 	{
 		Glow::Release();
+		BulletBeams::Get().Release();
 
 		clientmodeHook.unhook_all();
 		direct3dHook.unhook_all();
 		surfaceHook.unhook_all();
 		svcheatsHook.unhook_all();
 		clientHook.unhook_all();
+		viewrenderHook.unhook_all();
+		modelrenderHook.unhook_all();
+		bspqueryHook.unhook_all();
+		vguipanelHook.unhook_all();
 		SetWindowLongPtrA(FindWindowW(L"Valve001", nullptr), GWLP_WNDPROC, LONG_PTR(originalWndProc));
 	}
 
@@ -52,6 +79,10 @@ namespace Hooks {
 	{
 		if (msg == WM_KEYDOWN && LOWORD(wParam) == VK_INSERT) {
 			Menu::Get().Toggle();
+			if (Menu::Get().isOpened()) {
+				ImGui::GetIO().MouseDown[0] = false;
+				//TODO: g_InputSystem->ResetInputState();
+			}
 		}
 
 		LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -74,6 +105,8 @@ namespace Hooks {
 		__asm mov framePointer, ebp;
 		bool& bSendPacket = *reinterpret_cast<bool*>(*framePointer - 0x1C);
 
+		float yaw = cmd->viewangles.yaw;
+
 		LagCompensation::Get().Update();
 
 		static int counter = 0;
@@ -86,15 +119,62 @@ namespace Hooks {
 		}
 		Misc::BunnyHop(cmd);
 
+		LagCompensation::Get().FakeLag(bSendPacket);
+
+		AntiAim::Get().Run(cmd, bSendPacket);
+
 		EnginePrediction::StartPrediction(cmd); {
 
-
+			Aimbot::Get().Run(cmd, bSendPacket);
 
 		} EnginePrediction::EndPrediction();
 
-		LagCompensation::Get().FakeLag(bSendPacket);
+		//Movement fix
+		cmd->viewangles.Normalize();
+		auto degreesToRadians = [](float degrees) constexpr noexcept { return degrees * static_cast<float>(3.14159265358979323846) / 180.0f; }; //TODO: Use Math.h DEG2RAD instead
+		float oldYaw = yaw + (yaw < 0.0f ? 360.0f : 0.0f);
+		float newYaw = cmd->viewangles.yaw + (cmd->viewangles.yaw < 0.0f ? 360.0f : 0.0f);
+		float yawDelta = newYaw < oldYaw ? fabsf(newYaw - oldYaw) : 360.0f - fabsf(newYaw - oldYaw);
+		yawDelta = 360.0f - yawDelta;
+		const float forwardmove = cmd->forwardmove;
+		const float sidemove = cmd->sidemove;
+		cmd->forwardmove = std::cos(degreesToRadians(yawDelta)) * forwardmove + std::cos(degreesToRadians(yawDelta + 90.0f)) * sidemove;
+		cmd->sidemove = std::sin(degreesToRadians(yawDelta)) * forwardmove + std::sin(degreesToRadians(yawDelta + 90.0f)) * sidemove;
+
+		//Angle clamping
+		//TODO: mby add pitch clamping
+		float vayaw = cmd->viewangles.yaw;
+
+		while (vayaw < -180.f)
+			vayaw += 180.f * 2;
+		while (vayaw > 180.f)
+			vayaw -= 180.f * 2;
+
+		cmd->viewangles.yaw = vayaw;
+		cmd->viewangles.roll = 0.0f;
+		cmd->forwardmove = std::clamp(cmd->forwardmove, -450.0f, 450.0f);
+		cmd->sidemove = std::clamp(cmd->sidemove, -450.0f, 450.0f);
+
+		if (g_LocalPlayer && g_LocalPlayer->IsAlive()) {
+			Vars::lbyAngle = QAngle(cmd->viewangles.pitch, g_LocalPlayer->m_flLowerBodyYawTarget(), 0.f);
+
+			static int sendPackets = 0;
+
+			if (!bSendPacket || sendPackets > 16) {
+				Vars::serverAngle = cmd->viewangles;
+			}
+			if (bSendPacket) {
+				Vars::fakeAngle = cmd->viewangles;
+			}
+
+			if (bSendPacket)
+				sendPackets++;
+			else
+				sendPackets = 0;
+		}
 		LagCompensation::Get().OnProcessCmd(cmd, bSendPacket);
-		return result;
+		Vars::lastCmd = cmd;
+		return false;
 	}
 
 	HRESULT __stdcall Present(IDirect3DDevice9* device, const RECT* src, const RECT* dest, HWND windowOverride, const RGNDATA* dirtyRegion)
@@ -168,6 +248,23 @@ namespace Hooks {
 			pDevice->SetVertexDeclaration(vert_dec);
 			pDevice->SetVertexShader(vert_shader);
 		}
+
+		static bool removedFlash = false;
+
+		if (config.visual_removals_flash_effect != removedFlash) 
+		{
+			IMaterial* flash = g_MaterialSystem->FindMaterial("effects\\flashbang", TEXTURE_GROUP_CLIENT_EFFECTS);
+			IMaterial* flashWhite = g_MaterialSystem->FindMaterial("effects\\flashbang_white", TEXTURE_GROUP_CLIENT_EFFECTS);
+
+			if (flash && flashWhite)
+			{
+				flash->SetMaterialVarFlag(MATERIAL_VAR_NO_DRAW, config.visual_removals_flash_effect);
+				flashWhite->SetMaterialVarFlag(MATERIAL_VAR_NO_DRAW, config.visual_removals_flash_effect);
+
+			}
+			removedFlash = config.visual_removals_flash_effect;
+		}
+
 		return oEndScene(pDevice);
 	}
 
@@ -185,23 +282,29 @@ namespace Hooks {
 		return hr;
 	}
 
-	void __stdcall LockCursor() 
+	void __fastcall LockCursor(void* _this)
 	{
 		static auto oLockCursor = surfaceHook.get_original<decltype(&LockCursor)>(index::LockCursor);
 		if (Menu::Get().isOpened()) {
 			g_Surface->UnlockCursor();
 			return;
 		}
-		oLockCursor();
+		oLockCursor(g_Surface);
 	}
 
 	int __fastcall DoPostScreenEffects(void* _this, int edx, int a1)
 	{
 		static auto oDoPostScreenEffects = clientmodeHook.get_original<decltype(&DoPostScreenEffects)>(index::DoPostScreenEffects);
 
-		if (g_LocalPlayer) {
-			Glow::Run();
+		BulletBeams::Get().OnDoPostScreenEffects();
+
+		if (g_Engine->IsInGame()) {
+			//TODO: Move to visuals class
+			static auto disablePostProcessing = *(bool**)(Utils::PatternScan(Modules::client_panorama, "83 EC 4C 80 3D") + 5);
+			*disablePostProcessing = config.visual_removals_postProcessing; //TODO: Check if it is still disabled after releasing
 		}
+
+		Glow::Run();
 
 		return oDoPostScreenEffects(g_ClientMode, edx, a1);
 	}
@@ -209,7 +312,7 @@ namespace Hooks {
 	bool __fastcall SvCheatsGetBool(PVOID pConVar)
 	{
 		static auto dwCAM_Think = Utils::PatternScan(GetModuleHandleW(L"client_panorama.dll"), "85 C0 75 30 38 86");
-		static auto oGetBool = svcheatsHook.get_original<bool(__thiscall*)(PVOID)>(index::ConVar_GetBool); //This crashes when called like other hooks? TODO: fix, this triggers me
+		static auto oGetBool = svcheatsHook.get_original<bool(__thiscall*)(PVOID)>(index::ConVar_GetBool); //This crashes when called like other hooks? TODO: fix, this triggers me //mby change fastcall to thiscall?
 		if (!oGetBool)
 			return false;
 		return reinterpret_cast<DWORD>(_ReturnAddress()) == reinterpret_cast<DWORD>(dwCAM_Think) || oGetBool(pConVar);
@@ -219,8 +322,204 @@ namespace Hooks {
 	{
 		static auto oFrameStageNotify = clientHook.get_original<decltype(&FrameStageNotify)>(index::FrameStageNotify);
 
+		if (g_Engine->IsInGame()) 
+		{
+			switch (stage)
+			{
+			case FRAME_RENDER_START:
+				if (g_Engine->IsInGame())
+				{
+					if (g_LocalPlayer && g_LocalPlayer->IsAlive() && Misc::KeyBinds::thirdpersonState) {
+						g_Prediction->SetLocalViewangles(Vars::serverAngle);
+
+						//TODO: Thirdperson anim fix
+						//mby https://www.unknowncheats.me/forum/counterstrike-global-offensive/348353-accurate-local-player.html
+					}
+
+					static bool removedSmokes = false;
+
+					if (config.visual_removals_smokes != removedSmokes) {
+						//pasta from DEADCELL
+						static const std::vector< const char* > vistasmoke_mats = {
+							"particle/vistasmokev1/vistasmokev1_fire",
+							"particle/vistasmokev1/vistasmokev1_smokegrenade",
+							"particle/vistasmokev1/vistasmokev1_emods",
+							"particle/vistasmokev1/vistasmokev1_emods_impactdust",
+						};
+						if (g_Engine->IsConnected()) {
+							for (auto mat_s : vistasmoke_mats) {
+								IMaterial* mat = g_MaterialSystem->FindMaterial(mat_s, TEXTURE_GROUP_OTHER);
+								mat->SetMaterialVarFlag(MATERIAL_VAR_NO_DRAW, false);
+								mat->SetMaterialVarFlag(MATERIAL_VAR_WIREFRAME, config.visual_removals_smokes);
+							}
+						}
+					}
+
+
+
+					Misc::FixAnimationLOD();
+				}
+				break;
+			case FRAME_NET_UPDATE_END:
+				LagCompensation::Get().OnFrameNetUpdateEnd();
+				break;
+			case FRAME_NET_UPDATE_POSTDATAUPDATE_END:
+				Resolver::ResolvePlayers();
+				break;
+			}
+		}
+
 		oFrameStageNotify(stage);
 	}
 
-	
+	void __fastcall OverrideView(void* _this, int edx, CViewSetup* viewSetup)
+	{
+		static auto oOverrideView = clientmodeHook.get_original<void(__thiscall*)(void*, CViewSetup*)>(index::OverrideView);
+		if (g_Engine->IsInGame() && viewSetup) {
+			Misc::Thirdperson();
+		}
+		oOverrideView(g_ClientMode, viewSetup);
+	}
+
+	//pasta from Osiris
+	struct RenderableInfo {
+		IClientRenderable* m_pRenderable;
+		std::byte pad[18];
+		uint16_t m_Flags;
+		uint16_t m_Flags2;
+	};
+
+	//pasta from Osiris and from https://www.unknowncheats.me/forum/counterstrike-global-offensive/330483-disable-model-occulusion.html
+	int __stdcall ListLeavesInBox(const Vector& mins, const Vector& maxs, unsigned short* list, int listMax)
+	{
+		static auto oListLeavesInBox = bspqueryHook.get_original<decltype(&ListLeavesInBox)>(index::ListLeavesInBox);
+		static auto listLeaves = Utils::PatternScan(GetModuleHandleW(L"client_panorama.dll"), "56 52 FF 50 18") + 5;
+
+		if (reinterpret_cast<DWORD>(_ReturnAddress()) == reinterpret_cast<DWORD>(listLeaves)) 
+		{
+			const auto info = *reinterpret_cast<RenderableInfo**>((std::uintptr_t)_AddressOfReturnAddress() + 0x14);
+			if (info && info->m_pRenderable) 
+			{
+				const auto ent = info->m_pRenderable->GetIClientUnknown()->GetBaseEntity();
+				if (ent && ent->IsPlayer()) 
+				{
+					if (config.misc_lc_disable_occlusion_check) 
+					{
+						// FIXME: sometimes players are rendered above smoke, maybe sort render list?
+						info->m_Flags &= ~0x100;
+						info->m_Flags2 |= 0x40;
+
+						float maxCoord = 16384.0f;
+						float minCoord = -maxCoord;
+						Vector min{ minCoord, minCoord, minCoord };
+						Vector max{ maxCoord, maxCoord, maxCoord };
+						return oListLeavesInBox(std::cref(min), std::cref(max), list, listMax);
+					}
+				}
+			}
+		}
+
+		return oListLeavesInBox(std::cref(mins), std::cref(maxs), list, listMax);
+	}
+
+	void __fastcall RenderSmokeOverlay(uintptr_t ecx, uintptr_t edx, bool a1)
+	{
+		static auto oRenderSmokeOverlay = viewrenderHook.get_original<void(__thiscall*)(uintptr_t, bool)>(index::RenderSmokeOverlay);
+		if(!config.visual_removals_smokes)
+			oRenderSmokeOverlay(ecx, a1);
+	}
+
+	//pppppasta from CSGOSimple
+	void __fastcall DrawModelExecute(void* _this, int edx, IMatRenderContext* ctx, const DrawModelState_t& state, const ModelRenderInfo_t& pInfo, matrix3x4_t* pCustomBoneToWorld)
+	{
+		static auto oDrawModelExecute = modelrenderHook.get_original<decltype(&DrawModelExecute)>(index::DrawModelExecute);
+
+		if (!g_Engine->IsConnected() || !g_Engine->IsInGame() || !ctx || !pCustomBoneToWorld || !g_LocalPlayer || 
+			(g_ModelRender->IsForcedMaterialOverride() &&
+			!strstr(pInfo.pModel->szName, "arms") &&
+			!strstr(pInfo.pModel->szName, "weapons/v_"))) {
+			return oDrawModelExecute(_this, edx, ctx, state, pInfo, pCustomBoneToWorld);
+		}
+
+		auto mdl = pInfo.pModel;
+		
+		if (strstr(mdl->szName, "models/player") != nullptr) {
+			//C_BasePlayer* player = (C_BasePlayer*) g_EntityList->GetClientEntity(pInfo.entity_index);
+			//TODO: Mby add 'no rendering for mates/enemies...'
+			if (Misc::KeyBinds::thirdpersonState && g_LocalPlayer->m_bIsScoped() && pInfo.entity_index == g_LocalPlayer->EntIndex()) {
+				g_RenderView->SetBlend(0.4f);
+			}
+		}
+		else if (strstr(mdl->szName, "sleeve") != nullptr && config.visual_removals_sleeves) {
+
+			auto material = g_MaterialSystem->FindMaterial(mdl->szName, TEXTURE_GROUP_MODEL);
+			if (!material)
+				return;
+
+			material->SetMaterialVarFlag(MATERIAL_VAR_NO_DRAW, true);
+			g_ModelRender->ForcedMaterialOverride(material);
+		}
+		else if (strstr(mdl->szName, "arms") != nullptr && config.visual_removals_hands) {
+			auto material = g_MaterialSystem->FindMaterial(mdl->szName, TEXTURE_GROUP_MODEL);
+			if (!material)
+				return;
+
+			material->SetMaterialVarFlag(MATERIAL_VAR_NO_DRAW, true);
+			g_ModelRender->ForcedMaterialOverride(material);
+		}
+
+		Chams::Get().OnDrawModelExecute(ctx, state, pInfo, pCustomBoneToWorld);
+
+		oDrawModelExecute(_this, edx, ctx, state, pInfo, pCustomBoneToWorld);
+
+		g_ModelRender->ForcedMaterialOverride(nullptr);
+	}
+
+	void __fastcall PaintTraverse(void* thisptr, void*, unsigned int vguiPanel, bool forceRepaint, bool allowForce)
+	{
+		static auto oPaintTraverse = vguipanelHook.get_original<void(__thiscall*)(void*, unsigned int, bool, bool)>(index::PaintTraverse);
+
+		//pasta from Elysium
+		static uint32_t HudZoomPanel;
+		static uint32_t FocusOverlayPanel;
+
+		if (!HudZoomPanel) 
+		{
+			if (!strcmp("HudZoom", g_VGuiPanel->GetName(vguiPanel))) 
+			{
+				HudZoomPanel = vguiPanel;
+			}
+		}
+
+		if (!FocusOverlayPanel)
+		{
+			const char* szName = g_VGuiPanel->GetName(vguiPanel);
+
+			if (lstrcmpA(szName, "MatSystemTopPanel") == 0)
+			{
+				FocusOverlayPanel = vguiPanel;
+			}
+		}
+
+		if (HudZoomPanel == vguiPanel && config.visual_removals_scope && g_LocalPlayer)
+		{
+			if (g_LocalPlayer->m_bIsScoped()) {
+				return;
+			}
+		}
+
+		oPaintTraverse(thisptr, vguiPanel, forceRepaint, allowForce);
+
+		if (FocusOverlayPanel == vguiPanel)
+		{
+			if (g_LocalPlayer && config.visual_removals_scope && g_LocalPlayer->m_bIsScoped()) {
+				int screenX, screenY;
+				g_Engine->GetScreenSize(screenX, screenY);
+				g_Surface->DrawSetColor(Color(0, 0, 0, 255));
+				g_Surface->DrawLine(screenX / 2, 0, screenX / 2, screenY);
+				g_Surface->DrawLine(0, screenY / 2, screenX, screenY / 2);
+			}
+		}
+	}
+
 }

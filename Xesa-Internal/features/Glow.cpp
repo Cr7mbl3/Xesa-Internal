@@ -7,6 +7,9 @@ namespace Glow {
 
 	void Run()
 	{
+		if (!g_LocalPlayer)
+			return;
+
 		int32_t localTeamNum = g_LocalPlayer->m_iTeamNum();
 		for (auto i = 0; i < g_GlowObjectManager->m_GlowObjectDefinitions.m_Size; i++) {
 			auto& glowObject = g_GlowObjectManager->m_GlowObjectDefinitions[i];

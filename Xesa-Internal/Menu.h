@@ -2,6 +2,7 @@
 
 #include "utils/Singleton.h"
 #include "imgui/imgui.h"
+#include "SDK/Color.h"
 
 class Menu : public Singleton<Menu>
 {
@@ -47,4 +48,5 @@ namespace ImGui {
 	template<size_t N>
 	bool RenderSideBar(const char* const (&names)[N], int& active) { return RenderSideBar(names, active, true); };
 
+	void HotKey(int& key);
 }

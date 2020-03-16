@@ -95,6 +95,39 @@
     <ClCompile Include="SDK\checksum_md5.cpp">
       <Filter>Quelldateien\SDK</Filter>
     </ClCompile>
+    <ClCompile Include="features\Aimbot.cpp">
+      <Filter>Quelldateien\features</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\Entities.cpp">
+      <Filter>Quelldateien\SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\Vector4D.cpp">
+      <Filter>Quelldateien\SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\Math.cpp">
+      <Filter>Quelldateien\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="features\WallHelper.cpp">
+      <Filter>Quelldateien\features</Filter>
+    </ClCompile>
+    <ClCompile Include="features\AntiAim.cpp">
+      <Filter>Quelldateien\features</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\CBaseAnimState.cpp">
+      <Filter>Quelldateien\SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="features\AimHelper.cpp">
+      <Filter>Quelldateien\features</Filter>
+    </ClCompile>
+    <ClCompile Include="features\BulletBeams.cpp">
+      <Filter>Quelldateien\features</Filter>
+    </ClCompile>
+    <ClCompile Include="features\Resolver.cpp">
+      <Filter>Quelldateien\features</Filter>
+    </ClCompile>
+    <ClCompile Include="features\Chams.cpp">
+      <Filter>Quelldateien\features</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SDK\ConVar.h">
@@ -110,9 +143,6 @@
       <Filter>Headerdateien\SDK</Filter>
     </ClInclude>
     <ClInclude Include="SDK\QAngle.h">
-      <Filter>Headerdateien\SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="SDK\basetypes.h">
       <Filter>Headerdateien\SDK</Filter>
     </ClInclude>
     <ClInclude Include="SDK\Color.h">
@@ -131,9 +161,6 @@
       <Filter>Headerdateien\SDK</Filter>
     </ClInclude>
     <ClInclude Include="SDK\Recv.h">
-      <Filter>Headerdateien\SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="SDK\const.h">
       <Filter>Headerdateien\SDK</Filter>
     </ClInclude>
     <ClInclude Include="SDK\IClientEntityList.h">
@@ -252,6 +279,90 @@
     </ClInclude>
     <ClInclude Include="SDK\checksum_md5.h">
       <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="features\Aimbot.h">
+      <Filter>Headerdateien\features</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\Math.h">
+      <Filter>Headerdateien\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\BaseHandle.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\EHandle.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IVModelInfoClient.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IEngineTrace.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\ClassIDs.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Vector4D.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\VMatrix.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Studio.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="features\WallHelper.h">
+      <Filter>Headerdateien\features</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IPhysics.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="features\AntiAim.h">
+      <Filter>Headerdateien\features</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IClientMode.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IInputSystem.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\CBaseAnimState.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\ItemDefinitionIndexes.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="features\AimHelper.h">
+      <Filter>Headerdateien\features</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IGameEventManager.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="features\BulletBeams.h">
+      <Filter>Headerdateien\features</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IViewRenderBeams.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="features\Resolver.h">
+      <Filter>Headerdateien\features</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IVModelRenderer.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IMaterialSystem.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IAppSystem.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="features\Chams.h">
+      <Filter>Headerdateien\features</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\RenderView.h">
+      <Filter>Headerdateien\SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IPanel.h">
+      <Filter>Headerdateien\SDK</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

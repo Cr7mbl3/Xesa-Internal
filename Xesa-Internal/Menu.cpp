@@ -1,6 +1,7 @@
 #include "Menu.h"
 
 #include <winerror.h>
+#include <sstream>
 #include "imgui/imgui_internal.h"
 #include "imgui/impl/imgui_impl_dx9.h"
 #include "imgui/impl/imgui_impl_win32.h"
@@ -123,9 +124,40 @@ void Menu::CreateStyle()
 
 void Menu::RenderAimTab()
 {
+	static int ActiveTab = 0;
+	static const char* TabNames[] = {
+		"Legit",
+		"Rage", 
+		"Anti-Aim", 
+		"Resolver"
+	};
+	enum Tabs {
+		TAB_LEGIT,
+		TAB_RAGE,
+		TAB_ANTIAIM,
+		TAB_RESOLVER
+	};
+	ImGui::RenderSideBar(TabNames, ActiveTab);
+
 	ImGui::BeginGroupBox("#aim_content");
 	{
-		ImGui::TextDisabled("Nothing to see here");
+		switch (ActiveTab) {
+		case TAB_LEGIT:
+			ImGui::TextDisabled("Nothing to see here");
+			break;
+		case TAB_RAGE:
+			ImGui::Checkbox("Enable Ragebot", config.aim_ragebot_enable);
+			ImGui::SliderFloat("Hitchance", config.aim_ragebot_hitchance, 0.f, 100.f, "%.0f%");
+			ImGui::SliderFloat("Minimum Damage", config.aim_ragebot_min_damage, 0.1f, 100.f, "%.0f");
+			break; 
+		case TAB_ANTIAIM:
+			ImGui::Checkbox("Enable AntiAim", config.aim_antiaim_enable);
+			break;
+		case TAB_RESOLVER:
+			ImGui::Checkbox("Enable Resolver", config.aim_resolver_enable);		
+			break;
+		}
+
 	}
 	ImGui::EndGroupBox();
 }
@@ -135,10 +167,14 @@ void Menu::RenderVisualsTab()
 	static int ActiveTab = 0;
 	static const char* TabNames[] = {
 			"ESP",
+			"Chams",
+			"Removals",
 			"Other"
 	};
 	enum Tabs {
 		TAB_ESP,
+		TAB_CHAMS,
+		TAB_REMOVALS,
 		TAB_OTHER,
 	};
 	ImGui::RenderSideBar(TabNames, ActiveTab);
@@ -148,11 +184,51 @@ void Menu::RenderVisualsTab()
 		switch (ActiveTab) {
 			case TAB_ESP:
 				ImGui::Checkbox("Glow", config.visual_glow);
+				break; 
+			case TAB_CHAMS:
+				ImGui::Text("Arms");
+				ImGui::Checkbox("Arms Chams", config.visual_chams_arms);
+				if (config.visual_chams_arms) {
+					//ImGui::SameLine();
+					//ImGui::ColorPicker("Arms Chams Color Visible", config.visual_chams_arms_visible, true);
+					//ImGui::SameLine();
+					//ImGui::ColorPicker("Arms Chams Color Occluded", config.visual_chams_arms_occluded, true);
+
+					ImGui::Checkbox("Arms Ignore Z", config.visual_chams_arms_ingorez);
+					ImGui::Checkbox("Arms Flat", config.visual_chams_arms_flat);
+					ImGui::Checkbox("Arms Wireframe", config.visual_chams_arms_wireframe);
+					ImGui::Checkbox("Arms Glass", config.visual_chams_arms_glass);
+				}
+
+
+				ImGui::Text("Enemies");
+				ImGui::Checkbox("Enemies Chams", config.visual_chams_enemies);
+				if (config.visual_chams_enemies) {
+					//ImGui::SameLine();
+					//ImGui::ColorPicker("Arms Chams Color Visible", config.visual_chams_arms_visible, true);
+					//ImGui::SameLine();
+					//ImGui::ColorPicker("Arms Chams Color Occluded", config.visual_chams_arms_occluded, true);
+
+					ImGui::Checkbox("Enemies Ignore Z", config.visual_chams_enemies_ingorez);
+					ImGui::Checkbox("Enemies Flat", config.visual_chams_enemies_flat);
+					ImGui::Checkbox("Enemies Wireframe", config.visual_chams_enemies_wireframe);
+					ImGui::Checkbox("Enemies Glass", config.visual_chams_enemies_glass);
+				}
+				break;
+			case TAB_REMOVALS:
+				ImGui::Checkbox("Remove Post Processing", config.visual_removals_postProcessing);
+				ImGui::Checkbox("Remove Flash Effect", config.visual_removals_flash_effect);
+				ImGui::Checkbox("Remove Smokes", config.visual_removals_smokes);
+				ImGui::Checkbox("Remove Hands", config.visual_removals_hands);
+				if(!config.visual_removals_hands)
+					ImGui::Checkbox("Remove Sleeves", config.visual_removals_sleeves);
+				ImGui::Checkbox("Remove Scope", config.visual_removals_scope);
 				break;
 			case TAB_OTHER:
 				ImGui::Checkbox("Recoil Crosshair", config.visual_recoilCrosshair);
 				ImGui::Checkbox("Sniper Crosshair", config.visual_sniperCrosshair);
 				ImGui::Checkbox("Grenade Prediction", config.visual_grenadePrediction);
+				ImGui::Checkbox("Bullet beams", config.visual_bulletBeams);
 				break;
 		}
 	}
@@ -164,10 +240,12 @@ void Menu::RenderPlayerTab()
 	static int ActiveTab = 0;
 	static const char* TabNames[] = {
 		"Movement",
+		"World",
 		"Lag Compensation"
 	};
 	enum Tabs {
 		TAB_MOVEMENT,
+		WORLD,
 		TAB_LAGCOMPENSATION,
 	};
 	ImGui::RenderSideBar(TabNames, ActiveTab);
@@ -178,8 +256,20 @@ void Menu::RenderPlayerTab()
 		case TAB_MOVEMENT:
 			ImGui::Checkbox("Bunny Hop", config.misc_bhop);
 			break;
+		case WORLD:
+			ImGui::Checkbox("Thirdperson", config.misc_thirdperson);
+			ImGui::SameLine();
+			ImGui::HotKey(*config.misc_thirdperson_key);
+			if (config.misc_thirdperson) 
+			{
+				ImGui::SliderFloat("Thirdperson Distance", config.misc_thirdperson_distance, 100.f, 250.f, "%.0f");
+			}
+			break;
 		case TAB_LAGCOMPENSATION:
-			ImGui::Checkbox("Fake Lag", config.misc_fakelag);
+			ImGui::Checkbox("Fake Lag", config.misc_lc_fakelag);
+			ImGui::Checkbox("Disable Interpolation", config.misc_lc_disable_interpolation); 
+			ImGui::Checkbox("Fix Animation LOD", config.misc_lc_fixAnimationLOD);
+			ImGui::Checkbox("Disable Occlusion Check", config.misc_lc_disable_occlusion_check); //TODO: check if this should be under LagComp category
 			break;
 		}
 		
@@ -310,7 +400,6 @@ void ImGui::RenderTabs(const char* (&names)[N], int& active)
 	}
 }
 
-
 template<size_t N>
 bool ImGui::RenderSideBar(const char* const (&names)[N], int& active, bool same_line)
 {
@@ -320,4 +409,33 @@ bool ImGui::RenderSideBar(const char* const (&names)[N], int& active, bool same_
 	if(same_line)
 		ImGui::SameLine();
 	return result;
+}
+
+//pasta from Osiris
+void ImGui::HotKey(int& key)
+{
+	if (!g_InputSystem)
+		return;
+
+	if (key) 
+	{
+		ImGui::Text("[ %s ]", g_InputSystem->VirtualKeyToString(key));
+	}
+	else 
+	{
+		ImGui::TextUnformatted("[ key ]");
+	}
+
+	if (!ImGui::IsItemHovered())
+		return;
+
+	ImGui::SetTooltip("Press any key to change keybind");
+	ImGuiIO& io = ImGui::GetIO();
+	for (int i = 0; i < IM_ARRAYSIZE(io.KeysDown); i++)
+		if (ImGui::IsKeyPressed(i) && i != VK_INSERT)
+			key = i != VK_ESCAPE ? i : 0;
+
+	for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++)
+		if (ImGui::IsMouseDown(i) && i + (i > 1 ? 2 : 1) != VK_INSERT)
+			key = i + (i > 1 ? 2 : 1);
 }
