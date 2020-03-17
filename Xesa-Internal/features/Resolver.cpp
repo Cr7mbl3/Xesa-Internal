@@ -20,6 +20,8 @@ void Resolver::ResolvePlayer(C_BasePlayer* player)
 		player->m_angEyeAngles().yaw = player->m_flLowerBodyYawTarget();
 	}
 
+	//TODO: add desync resolver
+
 	info.m_bFakeLagging = info.m_flSimulationTime == player->m_flSimulationTime();
 	info.m_flSimulationTime = player->m_flSimulationTime();
 	info.m_flLowerBodyYawTarget = player->m_flLowerBodyYawTarget();
