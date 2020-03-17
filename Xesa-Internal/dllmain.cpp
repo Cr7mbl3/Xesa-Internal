@@ -29,7 +29,7 @@ DWORD WINAPI Initialize(LPVOID hModule) {
 	freopen_s(reinterpret_cast<FILE**>stdin, "CONIN$", "r", stdin);
 	freopen_s(reinterpret_cast<FILE**>stdout, "CONOUT$", "w", stdout);
 
-	//display red warning bc console can get you untrusted (idk i heared it on yt)
+	//display red warning bc console might get you untrusted (idk i heared it on yt)
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12); //12 for dark red
 	std::cout << "Warning: Do not use Debug Build on VAC secured servers!" << std::endl;
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15); //reset color

@@ -322,53 +322,49 @@ namespace Hooks {
 	{
 		static auto oFrameStageNotify = clientHook.get_original<decltype(&FrameStageNotify)>(index::FrameStageNotify);
 
-		if (g_Engine->IsInGame()) 
-		{
-			switch (stage)
-			{
-			case FRAME_RENDER_START:
-				if (g_Engine->IsInGame())
-				{
-					if (g_LocalPlayer && g_LocalPlayer->IsAlive() && Misc::KeyBinds::thirdpersonState) {
-						g_Prediction->SetLocalViewangles(Vars::serverAngle);
-
-						//TODO: Thirdperson anim fix
-						//mby https://www.unknowncheats.me/forum/counterstrike-global-offensive/348353-accurate-local-player.html
-					}
-
-					static bool removedSmokes = false;
-
-					if (config.visual_removals_smokes != removedSmokes) {
-						//pasta from DEADCELL
-						static const std::vector< const char* > vistasmoke_mats = {
-							"particle/vistasmokev1/vistasmokev1_fire",
-							"particle/vistasmokev1/vistasmokev1_smokegrenade",
-							"particle/vistasmokev1/vistasmokev1_emods",
-							"particle/vistasmokev1/vistasmokev1_emods_impactdust",
-						};
-						if (g_Engine->IsConnected()) {
-							for (auto mat_s : vistasmoke_mats) {
-								IMaterial* mat = g_MaterialSystem->FindMaterial(mat_s, TEXTURE_GROUP_OTHER);
-								mat->SetMaterialVarFlag(MATERIAL_VAR_NO_DRAW, false);
-								mat->SetMaterialVarFlag(MATERIAL_VAR_WIREFRAME, config.visual_removals_smokes);
-							}
-						}
-					}
-
-
-
-					Misc::FixAnimationLOD();
-				}
-				break;
-			case FRAME_NET_UPDATE_END:
-				LagCompensation::Get().OnFrameNetUpdateEnd();
-				break;
-			case FRAME_NET_UPDATE_POSTDATAUPDATE_END:
-				Resolver::ResolvePlayers();
-				break;
-			}
+		if (!g_Engine->IsInGame()) {
+			oFrameStageNotify(stage);
+			return;
 		}
+		static bool removedSmokes = false;
 
+		switch (stage)
+		{
+		case FRAME_RENDER_START:
+			
+			if (g_LocalPlayer && g_LocalPlayer->IsAlive() && Misc::KeyBinds::thirdpersonState) {
+				g_Prediction->SetLocalViewangles(Vars::serverAngle);
+
+				//TODO: Thirdperson anim fix
+				//mby https://www.unknowncheats.me/forum/counterstrike-global-offensive/348353-accurate-local-player.html
+			}
+
+			if (config.visual_removals_smokes != removedSmokes) {
+				//pasta from DEADCELL
+				static const std::vector< const char* > vistasmoke_mats = {
+					"particle/vistasmokev1/vistasmokev1_fire",
+					"particle/vistasmokev1/vistasmokev1_smokegrenade",
+					"particle/vistasmokev1/vistasmokev1_emods",
+					"particle/vistasmokev1/vistasmokev1_emods_impactdust",
+				};
+				if (g_Engine->IsConnected()) {
+					for (auto mat_s : vistasmoke_mats) {
+						IMaterial* mat = g_MaterialSystem->FindMaterial(mat_s, TEXTURE_GROUP_OTHER);
+						mat->SetMaterialVarFlag(MATERIAL_VAR_NO_DRAW, false);
+						mat->SetMaterialVarFlag(MATERIAL_VAR_WIREFRAME, config.visual_removals_smokes);
+					}
+				}
+			}
+			Misc::FixAnimationLOD();
+			break;
+		case FRAME_NET_UPDATE_END:
+			LagCompensation::Get().OnFrameNetUpdateEnd();
+			break;
+		case FRAME_NET_UPDATE_POSTDATAUPDATE_END:
+			Resolver::Get().ResolvePlayers();
+			break;
+		}
+		
 		oFrameStageNotify(stage);
 	}
 

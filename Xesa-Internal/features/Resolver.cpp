@@ -1,5 +1,7 @@
 #include "Resolver.h"
 
+#include <iostream>
+
 #include "../Interfaces.h"
 #include "../Config.h"
 
@@ -7,16 +9,22 @@ void Resolver::ResolvePlayer(C_BasePlayer* player)
 {
 	//TODO: Add onshot resolve
 
-	auto animState = player->GetAnimState();
-	if (!animState)
-		return;
+	ResolverInfo info = m_info[player->EntIndex()];
+	info.m_originalEyeAngles = player->m_angEyeAngles();
 
-	auto feetYaw = animState->m_flCurrentFeetYaw;
-	//auto bodyMaxRotation = animState->m_flMaxBodyYaw();
+	//check if lby updated
+	if (player->m_flLowerBodyYawTarget() != info.m_flLowerBodyYawTarget || info.m_flNextLbyUpdate > g_GlobalVars->curtime) {
 
-	if (feetYaw <= 58 && feetYaw >= -58) {
-		player->m_angEyeAngles().yaw -= player->GetMaxDesyncAngle();
+		float offset = player->m_vecVelocity().Length2D() > 0.1f ? 0.2f : 1.1f;
+		info.m_flNextLbyUpdate = g_GlobalVars->curtime + offset;
+		player->m_angEyeAngles().yaw = player->m_flLowerBodyYawTarget();
 	}
+
+	info.m_bFakeLagging = info.m_flSimulationTime == player->m_flSimulationTime();
+	info.m_flSimulationTime = player->m_flSimulationTime();
+	info.m_flLowerBodyYawTarget = player->m_flLowerBodyYawTarget();
+	info.m_resolvedEyeAngles = player->m_angEyeAngles();
+	m_info[player->EntIndex()] = info;
 }
 
 void Resolver::ResolvePlayers()

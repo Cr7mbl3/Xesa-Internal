@@ -79,7 +79,7 @@ public:
 	VALUE(bool, misc_lc_fakelag, false);
 	VALUE(bool, misc_lc_disable_interpolation, false);
 	VALUE(bool, misc_lc_fixAnimationLOD, false);
-	VALUE(bool, misc_lc_disable_occlusion_check, false); //check if this should be under LagComp category
+	VALUE(bool, misc_lc_disable_occlusion_check, false); //check if this should be under LagComp category ; prob not
 
 	VALUE(int, menu_DisplayMode, 0);
 };
